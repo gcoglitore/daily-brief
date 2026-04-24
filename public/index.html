@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAILY INTELLIGENCE BRIEF — DSB-260424-001</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Share+Tech+Mono&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1510;font-family:'Source Serif 4',Georgia,serif}
+.cb{background:#cc0000;color:white;text-align:center;padding:6px;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:5px;position:sticky;top:0;z-index:100}
+.hdr{background:linear-gradient(135deg,#0a0e18,#1a2b4a,#0a0e18);padding:24px 32px;border-bottom:3px solid #c8a84b;display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center}
+.hm{font-family:'Share Tech Mono',monospace;font-size:10px;color:#5a7aaa;line-height:2;letter-spacing:1px}
+.hm span{color:#8aaad0}
+.hc{text-align:center}
+.seal{width:80px;height:80px;border:2px solid #c8a84b;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:36px;background:radial-gradient(circle,#1a2b4a,#050810);box-shadow:0 0 20px rgba(200,168,75,0.3)}
+.ht{font-family:'Oswald',sans-serif;color:#c8a84b;font-size:18px;letter-spacing:4px}
+.hs{font-family:'Share Tech Mono',monospace;color:#3a5a8a;font-size:9px;letter-spacing:2px;margin-top:4px}
+.hr{text-align:right}
+.tb{background:#0f1319;padding:8px 32px;display:flex;align-items:center;gap:24px;font-family:'Share Tech Mono',monospace;font-size:10px;border-bottom:1px solid #1a2b4a;flex-wrap:wrap}
+.tl{padding:3px 10px;opacity:0.3;font-size:9px;letter-spacing:1px;border:1px solid transparent}
+.tl.a{opacity:1}
+.tle{color:#d4a017;border-color:#d4a017!important}
+.dc{margin-left:auto;display:flex;align-items:center;gap:10px;color:#4a6a9a}
+.dv{background:#880000;color:white;padding:3px 12px;border:1px solid #cc0000;font-weight:bold;letter-spacing:2px;animation:pulse 3s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(204,0,0,0.4)}50%{box-shadow:0 0 0 6px rgba(204,0,0,0)}}
+.body{background:#f2ecd8;max-width:960px;margin:0 auto;box-shadow:0 0 40px rgba(0,0,0,0.5)}
+.tsb{background:#e8dfc8;padding:6px 32px;display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:9px;color:#6b6458;border-bottom:1px solid #c8bfa8;flex-wrap:wrap;gap:8px}
+.lv{display:flex;align-items:center;gap:6px;color:#4a8c4a}
+.dot{width:6px;height:6px;background:#4a8c4a;border-radius:50%;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.exec{background:#1a2b4a;color:#c8d8e8;padding:24px 32px;border-bottom:3px solid #c8a84b}
+.el{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:3px;color:#c8a84b;margin-bottom:10px}
+.et{font-size:13px;line-height:1.8}
+.et strong{color:white}
+.sec{border-bottom:1px solid #c8bfa8}
+.sh{background:#e8dfc8;padding:10px 32px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:2px solid #b8afa0}
+.sn{font-family:'Oswald',sans-serif;font-size:11px;color:#cc0000;letter-spacing:2px;min-width:28px}
+.st{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:2px;color:#1a1510;flex:1}
+.sc{font-family:'Share Tech Mono',monospace;font-size:8px;color:#cc0000;background:rgba(204,0,0,0.08);padding:2px 6px;border:1px solid rgba(204,0,0,0.2)}
+.sb{padding:20px 32px;display:none}
+.sb.o{display:block}
+.region{border-left:3px solid #1a2b4a;padding-left:16px;margin-bottom:20px}
+.rn{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;color:#1a2b4a;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.badge{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 6px;letter-spacing:1px}
+.bc{background:rgba(204,0,0,0.12);color:#cc0000;border:1px solid #cc0000}
+.bh{background:rgba(220,100,30,0.12);color:#dd6622;border:1px solid #dd6622}
+.be{background:rgba(212,160,23,0.12);color:#d4a017;border:1px solid #d4a017}
+.bm{background:rgba(74,122,170,0.12);color:#4a7aaa;border:1px solid #4a7aaa}
+.f{display:flex;gap:10px;margin-bottom:8px;font-size:12px;line-height:1.7;color:#2a2520}
+.fn{font-family:'Share Tech Mono',monospace;font-size:9px;color:#6b6458;min-width:22px;padding-top:2px}
+.kj{background:rgba(26,43,74,0.06);border:1px solid rgba(26,43,74,0.2);border-left:4px solid #1a2b4a;padding:12px 16px;margin-bottom:10px;font-size:12px;line-height:1.7}
+.kjl{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:2px;color:#1a2b4a;margin-bottom:4px}
+.pt{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:10px;margin-top:8px}
+.pt th{background:#1a2b4a;color:#c8a84b;padding:7px 10px;text-align:left;font-size:9px;letter-spacing:2px}
+.pt td{padding:7px 10px;border-bottom:1px solid #c8bfa8;vertical-align:top;color:#2a2520}
+.pt tr:nth-child(even) td{background:rgba(0,0,0,0.03)}
+.sd{color:#4a8c4a}.sa{color:#d4a017}.sx{color:#cc0000}
+.ft{background:#e8dfc8;padding:16px 32px;display:flex;justify-content:space-between;border-top:2px solid #b8afa0;font-family:'Share Tech Mono',monospace;font-size:9px;color:#6b6458}
+</style>
+</head>
+<body>
+<div class="cb">⬛ TOP SECRET / SCI — NOFORN — AUTHORIZED RECIPIENTS ONLY ⬛</div>
+<div class="hdr">
+  <div class="hm">DOCUMENT: <span>DSB-260424-001</span><br>DATE: <span>FRIDAY, APRIL 24, 2026</span><br>TIME: <span id="zt">—</span> ZULU<br>PREPARED BY: <span>IC FUSION CENTER</span><br>CLASSIFICATION: <span>TS/SCI // NOFORN</span></div>
+  <div class="hc"><div class="seal">🦅</div><div class="ht">Daily Intelligence Brief</div><div class="hs">OFFICE OF THE DIRECTOR OF NATIONAL INTELLIGENCE</div></div>
+  <div class="hm hr">RECIPIENT: <span>AUTHORIZED PRINCIPALS</span><br>DISTRIBUTION: <span>EYES ONLY</span><br>COPY: <span>001 OF 001</span><br>HANDLE VIA: <span>SPECIAL CHANNELS</span><br>DESTROY: <span>AFTER REVIEW</span></div>
+</div>
+<div class="tb">
+  <span style="color:#4a6a9a;letter-spacing:2px">NATIONAL THREAT LEVEL:</span>
+  <div style="display:flex;gap:4px">
+    <div class="tl" style="color:#4a9a4a">LOW</div>
+    <div class="tl" style="color:#4a7aaa">GUARDED</div>
+    <div class="tl tle a">ELEVATED</div>
+    <div class="tl" style="color:#dd6622">HIGH</div>
+    <div class="tl" style="color:#cc0000">SEVERE</div>
+  </div>
+  <div class="dc"><span>DEFCON:</span><span class="dv">3</span><span style="margin-left:16px">FPCON: ALPHA</span></div>
+</div>
+<div class="body">
+  <div class="tsb">
+    <span>DSB DAILY INTELLIGENCE BRIEF // FRIDAY, APRIL 24, 2026</span>
+    <div class="lv"><div class="dot"></div>LIVE — UPDATED 1400Z APRIL 24, 2026</div>
+    <span>SOURCE: OSINT FUSION // DNI // USNI // ISW // CSIS</span>
+  </div>
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="exec">
+    <div class="el">// EXECUTIVE SUMMARY — LEAD ITEMS</div>
+    <div class="et">
+      <p>(S) Three U.S. Carrier Strike Groups are now converging on the CENTCOM theater — the <strong>USS Gerald R. Ford (CVN-78)</strong> operating in the Red Sea, the <strong>USS Abraham Lincoln (CVN-72)</strong> enforcing a naval blockade of Iranian ports in the northern Arabian Sea, and the <strong>USS George H.W. Bush (CVN-77)</strong> rounding the Horn of Africa en route — the largest concentration of U.S. naval power in the region since 2003. President Trump extended the <strong>U.S.-Iran ceasefire</strong> on April 22, however Iran has since seized two container ships in the Strait of Hormuz and attacked three additional cargo vessels, with the strait remaining a critical flashpoint threatening <strong>~20% of global seaborne oil trade</strong>. On <strong>Day 1,521</strong> of Russia's full-scale invasion of Ukraine, Russian forces launched one missile strike and 83 airstrikes dropping 277 guided aerial bombs in a 24-hour period, with the Kremlin setting conditions for possible future aggression against Baltic states per ISW assessment. The <strong>PLA Navy's Liaoning carrier group</strong> conducted its first Taiwan Strait transit since December on April 20, coinciding with East China Sea joint combat patrols — assessed as deliberate escalatory signaling by Beijing.</p>
+    </div>
+  </div>
+
+  <!-- SECTION I: MIDDLE EAST -->
+  <div class="sec">
+    <div class="sh" onclick="tog('s1')">
+      <span class="sn">I.</span><span class="st">Middle East &amp; CENTCOM Theater</span><span class="sc">TS/SCI</span>
+      <span id="a1" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
+    </div>
+    <div class="sb o" id="s1">
+      <div class="region">
+        <div class="rn">IRAN / STRAIT OF HORMUZ <span class="badge bc">CRITICAL</span></div>
+        <div class="f"><span class="fn">1.</span><span>(S) President Trump extended the U.S.-Iran ceasefire on April 22 to allow continued negotiations; however, Iran's navy on April 22 seized two container ships in the Strait of Hormuz, and three additional cargo vessels were attacked in the waterway. Iranian FM Araghchi declared that <strong>"blockading Iranian ports is an act of war."</strong> The U.S. naval blockade of Iranian ports remains in effect.</span></div>
+        <div class="f"><span class="fn">2.</span><span>(S) On April 23, President Trump ordered the U.S. Navy to destroy any Iranian boats laying mines in the strait. Iran had previously lost track of mines it planted, making full reopening of the strait impossible. U.S. Navy destroyers entered the strait on April 11 for the first time since the war began, conducting mine clearance operations.</span></div>
+        <div class="f"><span class="fn">3.</span><span>(S) The Strait of Hormuz — 34km wide at its narrowest point — facilitates approximately 20 million barrels of oil per day, representing <strong>~20% of global seaborne oil trade</strong>. China receives approximately one-third of its oil via this route. Sustained closure carries severe global economic consequences.</span></div>
+        <div class="f"><span class="fn">4.</span><span>(S) Operation Epic Fury devastated Iran's missile production facilities, stockpiles, and launch capabilities. Iran's Lavan Island oil refinery and Sirri Island crude export facilities sustained significant damage post-ceasefire. Iran restored internet access on April 17 after a 47-day blackout, enabling Iran-aligned hacktivist groups to resume global operations.</span></div>
+        <div class="kj"><div class="kjl">// KEY JUDGMENT — HIGH CONFIDENCE</div>The ceasefire remains fragile. Iran's seizure of commercial vessels and continued mining of the Strait represents active ceasefire violations. A military confrontation between U.S. and Iranian naval forces in the Strait is assessed as a near-term risk without diplomatic resolution. Iran's cyber capabilities are now being reconstituted following internet restoration.</div>
+      </div>
+      <div class="region">
+        <div class="rn">ISRAEL / LEBANON / HEZBOLLAH <span class="badge be">ELEVATED</span></div>
+        <div class="f"><span class="fn">5.</span><span>(S) A ceasefire in Lebanon took effect April 17. Despite the truce, Israeli troops remain present and are actively fighting Hezbollah militants in Lebanon's south. Israel continues consolidation of a buffer zone in southern Lebanon. Hezbollah rocket fire on northern Israel has continued intermittently.</span></div>
+        <div class="f"><span class="fn">6.</span><span>(S) The U.S.-Iran ceasefire agreement included a provision requiring Iran to re-open the Strait of Hormuz; however, following U.S. continuation of the Iranian port blockade, Iran re-imposed restrictions, indicating Iran views Lebanon ceasefire linkage as essential to any comprehensive settlement.</span></div>
+      </div>
+      <div class="region">
+        <div class="rn">U.S. CENTCOM NAVAL POSTURE <span class="badge bc">CRITICAL</span></div>
+        <div class="f"><span class="fn">7.</span><span>(S) Three U.S. carrier strike groups are now operating in or en route to the CENTCOM AOR — an unprecedented concentration of naval power not seen since Operation Iraqi Freedom in 2003. The USS Abraham Lincoln (CVN-72) is enforcing the Iranian port blockade in the northern Arabian Sea. The USS Gerald R. Ford (CVN-78) is operating in the Red Sea. The USS George H.W. Bush (CVN-77), with escorts DDG-75 Donald Cook, DDG-87 Mason, and DDG-71 Ross, is transiting around southern Africa and is en route to reinforce the theater.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION II: INDO-PACIFIC -->
+  <div class="sec">
+    <div class="sh" onclick="tog('s2')">
+      <span class="sn">II.</span><span class="st">Indo-Pacific &amp; INDOPACOM Theater</span><span class="sc">TS/SCI</span>
+      <span id="a2" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
+    </div>
+    <div class="sb o" id="s2">
+      <div class="region">
+        <div class="rn">TAIWAN STRAIT / PLA OPERATIONS <span class="badge bh">HIGH</span></div>
+        <div class="f"><span class="fn">1.</span><span>(S) The Chinese carrier <strong>Liaoning</strong> conducted its first Taiwan Strait transit since December on <strong>April 20, 2026</strong> — a deliberate demonstration of PLA naval capability timed to follow Japan's JS Ikazuchi destroyer transit of the strait. China conducted East China Sea joint combat readiness patrols on April 18 and lodged a strong diplomatic protest with Tokyo.</span></div>
+        <div class="f"><span class="fn">2.</span><span>(S) The PLA conducted simultaneous cross-theater exercises in the Philippine Sea and South China Sea. This multi-theater operational pattern represents an elevated readiness posture consistent with PLA preparations for a Taiwan contingency. The PRC has sustained an elevated operational tempo in the strait since Taiwan President William Lai's inauguration.</span></div>
+        <div class="f"><span class="fn">3.</span><span>(S) The U.S., Japan, and Philippines conducted joint live-fire exercises facing the Taiwan Strait, signaling combined deterrence. USS George Washington (CVN-73), homeported at Yokosuka, Japan, remains the primary FDNF carrier asset in the INDOPACOM theater.</span></div>
+        <div class="kj"><div class="kjl">// KEY JUDGMENT — MODERATE CONFIDENCE</div>The Liaoning transit and simultaneous multi-domain exercises represent a deliberate escalatory signal by Beijing, likely intended to test Japanese and U.S. response thresholds and normalize PLA operations in contested waters. Risk of miscalculation in the strait is elevated given concurrent CENTCOM commitments limiting available U.S. naval assets for INDOPACOM.</div>
+      </div>
+      <div class="region">
+        <div class="rn">SOUTH CHINA SEA <span class="badge be">ELEVATED</span></div>
+        <div class="f"><span class="fn">4.</span><span>(S) The PRC installed a 1,150-foot floating barrier at the entrance to Scarborough Shoal on April 10-11, further restricting Philippine access to traditional fishing grounds. The action represents continued PRC gray-zone pressure on Manila below the threshold of armed conflict.</span></div>
+      </div>
+      <div class="region">
+        <div class="rn">NORTH KOREA / DPRK <span class="badge bh">HIGH</span></div>
+        <div class="f"><span class="fn">5.</span><span>(S) North Korea has conducted multiple ballistic missile launches and cluster munition warhead tests in 2026, with 7 weapons tests recorded year-to-date. DPRK is assessed to be developing cluster munition warheads specifically to defeat U.S. and ROK missile defense systems, drawing lessons from Iranian and Russian missile operations. Choe Hyon-class destroyers are assessed to function primarily as nuclear missile delivery platforms.</span></div>
+        <div class="f"><span class="fn">6.</span><span>(S) <strong>WATCH ITEM:</strong> The Korean People's Army (KPA) founding anniversary falls on <strong>April 25</strong> — historically a period of heightened DPRK provocative activity. An additional weapons test or demonstration in the coming 24-48 hours is assessed as likely.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION III: EUROPE -->
+  <div class="sec">
+    <div class="sh" onclick="tog('s3')">
+      <span class="sn">III.</span><span class="st">European Theater &amp; NATO</span><span class="sc">TS/SCI</span>
+      <span id="a3" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
+    </div>
+    <div class="sb o" id="s3">
+      <div class="region">
+        <div class="rn">UKRAINE — RUSSIA WAR (DAY 1,521) <span class="badge bh">HIGH</span></div>
+        <div class="f"><span class="fn">1.</span><span>(S) Today marks <strong>Day 1,521</strong> of Russia's full-scale invasion of Ukraine. In the past 24 hours, 194 combat engagements were recorded. Russian forces launched one missile strike using two missiles and 83 airstrikes dropping 277 guided aerial bombs. Russia reported 900 soldiers killed in the past 24-hour period per Ukrainian General Staff.</span></div>
+        <div class="f"><span class="fn">2.</span><span>(S) ISW assessment (April 23): Russian President Putin directly justified domestic mobile internet outages as necessary for Russian security and is <strong>setting conditions to prepare Russians for continued restrictions</strong> — assessed as part of a broader Kremlin information control campaign in advance of potential future military action. The Kremlin continues to set conditions for possible future aggression against Baltic states.</span></div>
+        <div class="f"><span class="fn">3.</span><span>(S) Russia launched more drone strikes against Ukrainian targets in March 2026 than any other month of the war; however, Ukrainian forces intercepted 92% of them. Ukraine has intensified its drone and sea-drone campaign against Russian oil infrastructure at Ust-Luga, Primorsk, and other hubs, damaging approximately 20% of Russia's refining capacity since early 2024.</span></div>
+        <div class="f"><span class="fn">4.</span><span>(S) France and the UK are planning to deploy troops as peacekeeping observers for any future ceasefire arrangement. Russia has net lost approximately 2 square miles of Ukrainian territory over the past four weeks per ISW/DeepState analysis.</span></div>
+        <div class="kj"><div class="kjl">// KEY JUDGMENT — HIGH CONFIDENCE</div>Dutch MIVD assessment: Russian armed forces have grown larger and more capable during the Ukraine war and may achieve readiness for a NATO contingency within one year of any Ukraine settlement. NATO's DEFCON 3 posture reflects this assessment. The Kremlin's Baltic conditioning activities represent strategic preparation, not mere signaling.</div>
+      </div>
+      <div class="region">
+        <div class="rn">NATO ARCTIC SENTRY / HIGH NORTH <span class="badge be">ELEVATED</span></div>
+        <div class="f"><span class="fn">5.</span><span>(S) NATO SecGen Rutte launched <strong>Arctic Sentry</strong> on February 11, 2026 — a sustained maritime patrol, air policing, and long-range reconnaissance mission in the High North. Cold Response 26 exercise deployed approximately 25,000 troops from 14 nations across Norway, Finland, and Sweden.</span></div>
+        <div class="f"><span class="fn">6.</span><span>(S) Russian Deputy FM issued a formal warning of a Russian response to NATO Arctic challenges on <strong>April 19</strong>. Russian FM Zakharova stated Russia is "full master of the Arctic" with icebreaking fleet, air defense, and missile defense capabilities. Russia has reopened former Soviet-era Arctic airfields and deep-water ports.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION IV: FORCE POSTURE -->
+  <div class="sec">
+    <div class="sh" onclick="tog('s4')">
+      <span class="sn">IV.</span><span class="st">U.S. Force Posture &amp; Naval Disposition</span><span class="sc">TS/SCI</span>
+      <span id="a4" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
+    </div>
+    <div class="sb o" id="s4">
+      <table class="pt">
+        <tr><th>VESSEL</th><th>CLASS</th><th>LOCATION</th><th>STATUS</th><th>NOTES</th></tr>
+        <tr><td>USS Gerald R. Ford CVN-78</td><td>Ford-class CVN</td><td>Red Sea / CENTCOM AOR</td><td class="sd">COMBAT DEPLOYED</td><td>VFA-31 Tomcatters embarked; mine clearance ops</td></tr>
+        <tr><td>USS Abraham Lincoln CVN-72</td><td>Nimitz-class CVN</td><td>N. Arabian Sea</td><td class="sd">BLOCKADE ENFORCEMENT</td><td>Enforcing U.S. naval blockade of Iranian ports</td></tr>
+        <tr><td>USS George H.W. Bush CVN-77</td><td>Nimitz-class CVN</td><td>Off Horn of Africa</td><td class="sa">TRANSIT → CENTCOM</td><td>Escorts: DDG-75 Donald Cook, DDG-87 Mason, DDG-71 Ross</td></tr>
+        <tr><td>USS George Washington CVN-73</td><td>Nimitz-class CVN</td><td>Yokosuka, Japan (FDNF)</td><td class="sd">FORWARD DEPLOYED</td><td>7th Fleet; primary INDOPACOM CVN asset</td></tr>
+        <tr><td>USS Nimitz CVN-68</td><td>Nimitz-class CVN</td><td>Norfolk, Virginia</td><td class="sa">PRE-DECOMMISSION</td><td>Final deployment complete; decommissioning pending</td></tr>
+        <tr><td>USS Tripoli LHA-7 / 31st MEU</td><td>America-class LHA</td><td>CENTCOM AOR</td><td class="sd">DEPLOYED</td><td>Amphibious Ready Group; CENTCOM theater</td></tr>
+        <tr><td>USS Boxer LHD-4 / 11th MEU</td><td>Wasp-class LHD</td><td>Transiting to CENTCOM</td><td class="sa">TRANSIT</td><td>Boxer ARG / 11th MEU en route</td></tr>
+      </table>
+      <br>
+      <div class="region">
+        <div class="rn">OVERALL FORCE POSTURE ASSESSMENT <span class="badge bh">HIGH DEMAND</span></div>
+        <div class="f"><span class="fn">1.</span><span>(S) <strong>Total Battle Force: 291 ships</strong> (USS: 232, USNS: 59). Deployed: 104. Underway: 92. Three CSGs simultaneously in or en route to CENTCOM — unprecedented since Operation Iraqi Freedom 2003. Significant INDOPACOM coverage risk during CENTCOM surge.</span></div>
+        <div class="f"><span class="fn">2.</span><span>(S) <strong>10,000 additional U.S. troops</strong> deployed to the Middle East in support of CENTCOM operations. USSOUTHCOM Joint Security Cooperation Group Panama (JSCG-Panama) established.</span></div>
+        <div class="f"><span class="fn">3.</span><span>(S) Heritage Foundation 2026 Index of U.S. Military Strength rates overall U.S. readiness as <strong>MARGINAL</strong> — below the two-MRC (Major Regional Contingency) benchmark. Space Force "Race to Resilience" initiative is ongoing to address on-orbit vulnerability gaps.</span></div>
+        <div class="kj"><div class="kjl">// KEY JUDGMENT — HIGH CONFIDENCE</div>Simultaneous high-intensity commitments in CENTCOM and elevated tensions in INDOPACOM are stretching available carrier strike group coverage to historically stressed levels. A concurrent Taiwan contingency during peak CENTCOM engagement would present a severe force allocation challenge under current readiness ratings.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION V: CYBER -->
+  <div class="sec">
+    <div class="sh" onclick="tog('s5')">
+      <span class="sn">V.</span><span class="st">Cyber &amp; Information Warfare</span><span class="sc">TS/SCI</span>
+      <span id="a5" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
+    </div>
+    <div class="sb" id="s5">
+      <div class="region">
+        <div class="rn">IRAN CYBER THREAT <span class="badge bc">CRITICAL</span></div>
+        <div class="f"><span class="fn">1.</span><span>(S) Iran restored nationwide internet access on April 17 following a 47-day blackout imposed during Operation Epic Fury. Iran-aligned hacktivist groups — including Handala and affiliated actors — are now resuming global cyber operations. Attribution for imminent retaliatory cyber attacks against U.S. government, financial, and critical infrastructure targets is assessed as HIGH likelihood within the next 30 days.</span></div>
+      </div>
+      <div class="region">
+        <div class="rn">CHINA CYBER OPERATIONS <span class="badge bh">HIGH</span></div>
+        <div class="f"><span class="fn">2.</span><span>(S) PLA ongoing harvest of U.S. telecom data continues — all major U.S. telecommunications operators have been infiltrated per IC assessment. PLA cyber units are specifically targeting civilian infrastructure supporting Pacific military deployment, including rail networks, ports, and airports, in preparation for a potential Taiwan contingency. TikTok data collection affecting 135M+ U.S. users remains an active counterintelligence concern.</span></div>
+      </div>
+      <div class="region">
+        <div class="rn">RUSSIA CYBER OPERATIONS <span class="badge bh">HIGH</span></div>
+        <div class="f"><span class="fn">3.</span><span>(S) The Qilin ransomware group (Russian-speaking) attacked German Die Linke party infrastructure in March 2026. A separate Russian-attributed attack on European Commission cloud infrastructure was recorded on March 24, 2026. The Kremlin continues industrialized influence operations targeting U.S. government personnel and European political institutions.</span></div>
+      </div>
+      <div class="kj"><div class="kjl">// STRATEGIC ASSESSMENT — MODERATE CONFIDENCE</div>The next major armed conflict is assessed as likely to commence with or be preceded by large-scale cyberattacks targeting U.S. civilian infrastructure and joint force power projection capabilities. Current adversary pre-positioning in U.S. telecom and transportation networks is consistent with this doctrine.</div>
+    </div>
+  </div>
+
+  <!-- SECTION VI: WMD -->
+  <div class="sec">
+    <div class="sh" onclick="tog('s6')">
+      <span class="sn">VI.</span><span class="st">WMD, Strategic &amp; Nuclear Watch</span><span class="sc">TS/SCI // SIGMA</span>
+      <span id="a6" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
+    </div>
+    <div class="sb" id="s6">
+      <div class="region">
+        <div class="rn">NORTH KOREA NUCLEAR/MISSILE <span class="badge bh">HIGH</span></div>
+        <div class="f"><span class="fn">1.</span><span>(S) DPRK has conducted 7 weapons tests in 2026 year-to-date. North Korea is developing cluster munition warheads for ballistic missiles specifically designed to defeat U.S. and ROK missile defense systems, drawing lessons from Iran's wartime use of ballistic missiles. Choe Hyon-class destroyers are assessed to function primarily as mobile nuclear missile platforms. <strong>KPA 94th Anniversary: April 25</strong> — elevated test risk in next 24-48 hours.</span></div>
+      </div>
+      <div class="region">
+        <div class="rn">IRAN NUCLEAR PROGRAM <span class="badge be">ELEVATED</span></div>
+        <div class="f"><span class="fn">2.</span><span>(S) Operation Epic Fury significantly degraded Iran's missile production facilities, stockpiles, and launch capabilities. The status of Iran's nuclear program vis-à-vis weaponization timelines is under active IC reassessment. Iran's enrichment infrastructure at Fordow and Natanz sustained varying degrees of damage; full assessment is pending.</span></div>
+      </div>
+      <div class="region">
+        <div class="rn">RUSSIA NUCLEAR POSTURE <span class="badge bm">MODERATE</span></div>
+        <div class="f"><span class="fn">3.</span><span>(S) Russia's strategic nuclear deterrent remains stable. Russian military doctrine explicitly authorizes nuclear employment in response to conventional threats to Russian state survival. With NATO at DEFCON 3 and active conventional conflict in Europe, IC maintains elevated monitoring of Russian nuclear force posture indicators. No change in Russian nuclear readiness status detected at this time.</span></div>
+      </div>
+      <div class="region">
+        <div class="rn">CHINA NUCLEAR EXPANSION <span class="badge be">ELEVATED</span></div>
+        <div class="f"><span class="fn">4.</span><span>(S) PLA nuclear modernization continues. China is expanding its warhead stockpile and delivery system diversity, including ground-based ICBMs, submarine-launched ballistic missiles, and air-delivered weapons. PLA nuclear force is assessed to be approaching a minimum assured destruction capability vis-à-vis the United States.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION VII: TERRORISM -->
+  <div class="sec">
+    <div class="sh" onclick="tog('s7')">
+      <span class="sn">VII.</span><span class="st">Terrorism &amp; Transnational Threats</span><span class="sc">TS/SCI</span>
+      <span id="a7" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
+    </div>
+    <div class="sb" id="s7">
+      <div class="region">
+        <div class="rn">ISIS — SYRIA <span class="badge be">ELEVATED</span></div>
+        <div class="f"><span class="fn">1.</span><span>(S) ISIS is actively seeking to rebuild its ranks and expand support networks in Syria, exploiting instability created by Israeli and Turkish military interventions that have weakened the central Syrian government. ISIS is recruiting from escaped detainees and ISIS-linked civilians from former SDF-controlled camps. Resurgent ISIS in Syria represents a growing external attack planning concern.</span></div>
+      </div>
+      <div class="region">
+        <div class="rn">AQAP — YEMEN <span class="badge bh">HIGH</span></div>
+        <div class="f"><span class="fn">2.</span><span>(S) Al-Qaeda in the Arabian Peninsula (AQAP) remains among the terrorist organizations most likely to conduct external attack planning against Western targets per DNI 2026 Annual Threat Assessment. AQAP has exploited Yemen's ongoing conflict environment to maintain operational capacity.</span></div>
+      </div>
+      <div class="region">
+        <div class="rn">ISIS-K — SOUTH/CENTRAL ASIA <span class="badge be">ELEVATED</span></div>
+        <div class="f"><span class="fn">3.</span><span>(S) ISIS-Khorasan (ISIS-K) maintains the capability to conduct external attack planning targeting Western interests in South and Central Asia. The group has demonstrated intent and capability for mass-casualty attacks beyond its immediate theater of operations.</span></div>
+      </div>
+      <div class="region">
+        <div class="rn">AFRICA — SAHEL / AQ / ISIS AFFILIATES <span class="badge bh">HIGH</span></div>
+        <div class="f"><span class="fn">4.</span><span>(S) Africa has emerged as the primary focal point of the global Sunni jihadist movement. The largest and most violent al-Qaeda and ISIS affiliates are operating across the Sahel, exploiting governance vacuums in Mali, Burkina Faso, Niger, and Nigeria. Per DNI ATA 2026, African affiliates now represent the most significant expansion vector for both networks globally.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION VIII: ARCTIC -->
+  <div class="sec">
+    <div class="sh" onclick="tog('s8')">
+      <span class="sn">VIII.</span><span class="st">Arctic &amp; High North Operations</span><span class="sc">TS/SCI</span>
+      <span id="a8" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
+    </div>
+    <div class="sb" id="s8">
+      <div class="region">
+        <div class="rn">NATO ARCTIC SENTRY <span class="badge be">ELEVATED</span></div>
+        <div class="f"><span class="fn">1.</span><span>(S) NATO SecGen Rutte launched <strong>Arctic Sentry</strong> on February 11, 2026. The operation consists of sustained maritime patrols, air policing, and long-range reconnaissance missions across the High North. Cold Response 26 exercise deployed approximately 25,000 troops from 14 nations across Norway, Finland, and Sweden. Nordic Rapid Reaction Force concept has been extended to Finland and Sweden.</span></div>
+        <div class="f"><span class="fn">2.</span><span>(S) UK Defence Secretary Healey has characterized the current Arctic security environment as the <strong>greatest threat since the Cold War</strong>. Norway's Joint Operation Centre is maintaining continuous monitoring of Russian submarine activity in the High North.</span></div>
+      </div>
+      <div class="region">
+        <div class="rn">RUSSIAN ARCTIC BUILDUP <span class="badge bh">HIGH</span></div>
+        <div class="f"><span class="fn">3.</span><span>(S) Russian Deputy FM issued formal warning of response to NATO Arctic activities on <strong>April 19, 2026</strong>. Russian FM Zakharova asserted Russia is "full master of the Arctic" with operational icebreaking fleet, air defense, and missile defense systems in theater. Russia has reopened former Soviet-era Arctic airfields and deep-water ports and is conducting twice-monthly missile warning exercises in contested Arctic waters.</span></div>
+        <div class="f"><span class="fn">4.</span><span>(S) NATO is actively studying Russian fait accompli scenarios against Svalbard. Norwegian Special Forces and U.S., UK, and Dutch marines are conducting retake operation training. The Arctic is emerging as a second front in the broader NATO-Russia strategic competition.</span></div>
+      </div>
+      <div class="region">
+        <div class="rn">STRATEGIC RESOURCE COMPETITION <span class="badge bm">MONITOR</span></div>
+        <div class="f"><span class="fn">5.</span><span>(S) Competing Arctic EEZ claims and natural resource competition involves the U.S., Russia, China, Canada, Denmark, Finland, Iceland, Norway, Sweden, Turkey, and India. Northern Sea Route commercialization — accelerated by Arctic ice melt — creates new strategic chokepoints and basing requirements. China's Arctic ambitions represent a non-NATO actor complicating factor in the region.</span></div>
+      </div>
+      <div class="kj"><div class="kjl">// KEY JUDGMENT — MODERATE CONFIDENCE</div>The Arctic is transitioning from a strategic buffer to an active competition zone. Russian provocations below the threshold of armed conflict — combined with NATO's new northern members Finland and Sweden — are increasing the risk of miscalculation. U.S. icebreaker fleet insufficiency relative to Russia's 40+ icebreakers represents a persistent operational gap.</div>
+    </div>
+  </div>
+
+  <div class="ft">
+    <div>DOCUMENT: DSB-260424-001 // DATE: FRIDAY, APRIL 24, 2026 // PAGE: 001<br><span style="font-size:8px;color:#9a9080">SOURCES: OSINT FUSION // DNI ATA 2026 // ISW CAMPAIGN ASSESSMENT // USNI FLEET TRACKER // CSIS // CFR CONFLICT TRACKER // DEFENSE ONE // RUSSIAMATTERS.ORG // EMPR.MEDIA // AEI // NATO // ODNI // WIKIPEDIA OPEN SOURCE</span></div>
+    <div style="text-align:right">COPY: 001 OF 001<br><span style="color:#cc0000">TOP SECRET / SCI — NOFORN</span></div>
+  </div>
+</div>
+
+<script>
+function tog(id){
+  const b=document.getElementById(id);
+  const a=document.getElementById('a'+id.slice(1));
+  const o=b.classList.contains('o');
+  b.classList.toggle('o',!o);
+  b.style.display=o?'none':'block';
+  if(a)a.style.transform=o?'':'rotate(180deg)';
+}
+// Open first 4 sections
+['s1','s2','s3','s4'].forEach(id=>{
+  const b=document.getElementById(id);
+  if(b){b.style.display='block';b.classList.add('o');}
+});
+['s5','s6','s7','s8'].forEach(id=>{
+  const b=document.getElementById(id);
+  if(b){b.style.display='none';}
+});
+// Live Zulu time
+function zu(){return new Date().toISOString().slice(11,16)+'Z';}
+document.getElementById('zt').textContent=zu();
+setInterval(()=>{document.getElementById('zt').textContent=zu();},60000);
+</script>
+</body>
+</html>
