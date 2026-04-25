@@ -100,6 +100,13 @@ const PER_SECTION_TIMEOUT_MS = 90000;
 // can't cascade into the rest of the document layout.
 const VOID_TAGS = new Set(["br","img","hr","input","meta","link","area","base","col","source","track","wbr"]);
 function balanceHtmlTags(html) {
+  // First strip any trailing unclosed tag fragment (e.g. "<span class=\"fn" with
+  // no closing >). If the last "<" has no matching ">" after it, drop everything
+  // from that "<" onward.
+  const lastLt = html.lastIndexOf("<");
+  const lastGt = html.lastIndexOf(">");
+  if (lastLt > lastGt) html = html.slice(0, lastLt).replace(/\s+$/, "");
+
   const stack = [];
   const tagRe = /<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*?(\/?)>/g;
   let m;
