@@ -133,6 +133,78 @@ async function generateSection(key, label, prompt) {
   }
 }
 
+// ── Daily photo of the day (naval/shipping news) ────────────
+const FALLBACK_PHOTO_DATA_URL = ""; // empty src → browser shows broken img placeholder; figure caption still renders.
+
+const PHOTO_FEEDS = [
+  "https://news.usni.org/feed",
+  "https://www.navalnews.com/feed/",
+  "https://www.maritime-executive.com/articles/feed",
+];
+
+function fetchUrl(url, opts = {}) {
+  return new Promise((resolve, reject) => {
+    const lib = url.startsWith("https:") ? require("https") : require("http");
+    const req = lib.get(url, { timeout: 15000, headers: { "User-Agent": "Mozilla/5.0 (compatible; DailyBriefBot/1.0)" }, ...opts }, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        res.resume();
+        return resolve(fetchUrl(new URL(res.headers.location, url).toString(), opts));
+      }
+      if (res.statusCode !== 200) {
+        res.resume();
+        return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+      }
+      const chunks = [];
+      res.on("data", (c) => chunks.push(c));
+      res.on("end", () => resolve(Buffer.concat(chunks)));
+    });
+    req.on("error", reject);
+    req.on("timeout", () => { req.destroy(); reject(new Error(`timeout fetching ${url}`)); });
+  });
+}
+
+function extractFirstItem(rssXml) {
+  const itemMatch = rssXml.match(/<item\b[\s\S]*?<\/item>/);
+  if (!itemMatch) return null;
+  const item = itemMatch[0];
+  const title = (item.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/) || [])[1] || "";
+  // Try multiple image-extraction strategies in order of preference
+  let imgUrl =
+    (item.match(/<media:content[^>]+url="([^"]+\.(?:jpg|jpeg|png|webp))"/i) || [])[1] ||
+    (item.match(/<media:thumbnail[^>]+url="([^"]+)"/i) || [])[1] ||
+    (item.match(/<enclosure[^>]+url="([^"]+\.(?:jpg|jpeg|png|webp))"/i) || [])[1] ||
+    (item.match(/<img[^>]+src="([^"]+\.(?:jpg|jpeg|png|webp))/i) || [])[1] ||
+    null;
+  return imgUrl ? { title: title.replace(/<[^>]+>/g, "").trim(), imgUrl } : null;
+}
+
+async function fetchDailyPhoto() {
+  for (const feedUrl of PHOTO_FEEDS) {
+    try {
+      console.log(`[photo] Trying ${feedUrl}...`);
+      const xmlBuf = await fetchUrl(feedUrl);
+      const item = extractFirstItem(xmlBuf.toString("utf-8"));
+      if (!item) { console.log(`[photo]   no image in feed`); continue; }
+      console.log(`[photo]   found: ${item.imgUrl}`);
+      const imgBuf = await fetchUrl(item.imgUrl);
+      const ext = (item.imgUrl.match(/\.(jpg|jpeg|png|webp)/i) || ["", "jpeg"])[1].toLowerCase().replace("jpg", "jpeg");
+      const mime = `image/${ext}`;
+      const dataUrl = `data:${mime};base64,${imgBuf.toString("base64")}`;
+      const sourceHost = new URL(feedUrl).hostname.replace(/^www\./, "");
+      const caption = `${item.title} — via ${sourceHost.toUpperCase()}`;
+      console.log(`[photo] ✓ ${(imgBuf.length/1024).toFixed(0)} KB from ${sourceHost}`);
+      return { dataUrl, caption };
+    } catch (e) {
+      console.log(`[photo]   ${e.message}`);
+    }
+  }
+  console.log("[photo] ✗ all feeds failed; using fallback caption");
+  return {
+    dataUrl: FALLBACK_PHOTO_DATA_URL,
+    caption: "Photo feed unavailable — see source feeds (USNI / Naval News / Maritime Executive) directly.",
+  };
+}
+
 async function runInBatches(items, batchSize, fn) {
   const results = [];
   for (let i = 0; i < items.length; i += batchSize) {
@@ -150,16 +222,22 @@ async function main() {
 
   console.log(`Generating brief for ${dateFull} (${docNumber})`);
 
+  // Fetch daily photo in parallel with section generation (independent work)
+  const photoPromise = fetchDailyPhoto();
+
   const keys = Object.keys(SECTIONS);
   const results = await runInBatches(keys, 3, async (k) => ({
     key: k,
     content: await generateSection(k, SECTIONS[k].label, SECTIONS[k].prompt),
   }));
 
+  const photo = await photoPromise;
   let html = template
     .replaceAll("__DOC_NUMBER__", docNumber)
     .replaceAll("__DATE_FULL__", dateFull)
-    .replaceAll("__TIMESTAMP__", timestamp);
+    .replaceAll("__TIMESTAMP__", timestamp)
+    .replaceAll("__PHOTO_DATA_URL__", photo.dataUrl)
+    .replaceAll("__PHOTO_CAPTION__", photo.caption);
 
   for (const { key, content } of results) {
     const re = new RegExp(
