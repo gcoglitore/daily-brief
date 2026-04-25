@@ -76,16 +76,23 @@ const SECTIONS = {
 
 const SYSTEM = `You are a senior intelligence analyst writing an open-source intelligence brief grounded in current reporting. Use the web_search tool to find real, current developments before writing each section. Cite specific dates, named officials, vessel names, and locations only when verified by search results. Write in measured, authoritative IC briefing language. Output ONLY the requested HTML — no markdown code fences (no \`\`\`), no preamble, no postamble, no explanation.`;
 
+const PER_SECTION_TIMEOUT_MS = 120000;
+
 async function generateSection(key, label, prompt) {
   console.log(`[${key}] Generating ${label}...`);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), PER_SECTION_TIMEOUT_MS);
   try {
-    const response = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 2048,
-      tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 4 }],
-      system: SYSTEM,
-      messages: [{ role: "user", content: prompt }],
-    });
+    const response = await client.messages.create(
+      {
+        model: "claude-sonnet-4-6",
+        max_tokens: 2048,
+        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 3 }],
+        system: SYSTEM,
+        messages: [{ role: "user", content: prompt }],
+      },
+      { signal: controller.signal }
+    );
 
     const text = response.content
       .filter((b) => b.type === "text")
@@ -101,9 +108,22 @@ async function generateSection(key, label, prompt) {
     console.log(`[${key}] ✓ ${cleaned.length} chars`);
     return cleaned || `<div style="color:#cc0000;padding:12px;font-family:monospace;font-size:11px">${label.toUpperCase()} — NO CONTENT RETURNED</div>`;
   } catch (err) {
-    console.error(`[${key}] ✗ ${err.message}`);
-    return `<div style="color:#cc0000;padding:12px;font-family:monospace;font-size:11px">${label.toUpperCase()} — ${err.message}</div>`;
+    const msg = err.name === "AbortError" ? "timeout after 120s" : err.message;
+    console.error(`[${key}] ✗ ${msg}`);
+    return `<div style="color:#cc0000;padding:12px;font-family:monospace;font-size:11px">${label.toUpperCase()} — ${msg}</div>`;
+  } finally {
+    clearTimeout(timer);
   }
+}
+
+async function runInBatches(items, batchSize, fn) {
+  const results = [];
+  for (let i = 0; i < items.length; i += batchSize) {
+    const batch = items.slice(i, i + batchSize);
+    const batchResults = await Promise.all(batch.map(fn));
+    results.push(...batchResults);
+  }
+  return results;
 }
 
 async function main() {
@@ -114,12 +134,10 @@ async function main() {
   console.log(`Generating brief for ${dateFull} (${docNumber})`);
 
   const keys = Object.keys(SECTIONS);
-  const results = await Promise.all(
-    keys.map(async (k) => ({
-      key: k,
-      content: await generateSection(k, SECTIONS[k].label, SECTIONS[k].prompt),
-    }))
-  );
+  const results = await runInBatches(keys, 3, async (k) => ({
+    key: k,
+    content: await generateSection(k, SECTIONS[k].label, SECTIONS[k].prompt),
+  }));
 
   let html = template
     .replaceAll("__DOC_NUMBER__", docNumber)
