@@ -35,10 +35,28 @@ const STRUCTURE_REMINDER = `Use this exact HTML structure (no <style>, no <scrip
 </div>
 Use multiple region blocks per section. Badge color classes: bc (red/critical), bh (orange/high), be (yellow/elevated), bm (blue/moderate). Begin findings with "(S)". Output ONLY the HTML region divs — no preamble, no markdown fences, no explanation.`;
 
+const REACTION_STRUCTURE = `Use this exact HTML structure (no <style>, no <script>, no markdown fences). Output two blocks back-to-back:
+
+FIRST: a <div class="reaction-k">// GLOBAL REACTION — MARKETS & HEADLINES</div> followed by a <div class="reaction-grid"> containing exactly 4 reaction-card divs:
+<div class="reaction-card"><h4>Oil & inflation</h4><p>2-3 sentences on today's oil prices (Brent/WTI), inflation pressure, energy market.</p><span class="mini">SOURCE CUE // [PUBLISHER + DATE]</span></div>
+<div class="reaction-card"><h4>Gold & dollar</h4><p>2-3 sentences on safe-haven flows, gold movement, USD strength.</p><span class="mini">SOURCE CUE // [PUBLISHER + DATE]</span></div>
+<div class="reaction-card"><h4>Shipping signal</h4><p>2-3 sentences on key chokepoints, vessel disruptions, transit risk.</p><span class="mini">SOURCE CUE // [PUBLISHER + DATE]</span></div>
+<div class="reaction-card reaction-wide"><h4>Executive readout</h4><p>2-3 sentence cross-cutting analytic note tying the cards together.</p><span class="mini">ANALYTIC NOTE // [ONE-LINE TAKEAWAY]</span></div>
+
+SECOND: a <div class="headline-grid"> containing exactly 5 headline-tile divs in this order — United States, China, Russia, Iran, Europe:
+<div class="headline-tile"><h5>United States</h5><p>1-2 sentences on the US perspective today.</p><span>[PUBLISHER]</span></div>
+... (repeat for China, Russia, Iran, Europe)
+
+Output ONLY this raw HTML — no preamble, no code fences, no explanations.`;
+
 const SECTIONS = {
   exec: {
     label: "Executive Summary",
     prompt: `Today is ${dateFull}. Search the web for today's most critical global security developments and write a 4-5 sentence Executive Summary covering: any active US-Iran/Middle East situation; current Russia-Ukraine war status (include Day count if you can compute it from Feb 24, 2022 start); any major Indo-Pacific or PLA activity; any other tier-1 items. Use <strong> tags around critical terms (specific countries, vessels, percentages, day counts, named officials). Wrap the entire summary in a single <p> tag. Begin with "(S)". Output ONLY the <p>...</p> HTML — no markdown fences, no preamble.`,
+  },
+  reaction: {
+    label: "Global Reaction (markets & headlines)",
+    prompt: `Today is ${dateFull}. Search the web for today's market reaction to global security tensions: oil/Brent prices, gold movement, USD strength, key shipping chokepoints (especially Strait of Hormuz), and the headline narrative from the United States, China, Russia, Iran, and Europe. ${REACTION_STRUCTURE}`,
   },
   s1: {
     label: "Middle East & CENTCOM",
