@@ -76,22 +76,21 @@ const SECTIONS = {
 
 const SYSTEM = `You are a senior intelligence analyst writing an open-source intelligence brief grounded in current reporting. Use the web_search tool to find real, current developments before writing each section. Cite specific dates, named officials, vessel names, and locations only when verified by search results. Write in measured, authoritative IC briefing language. Output ONLY the requested HTML — no markdown code fences (no \`\`\`), no preamble, no postamble, no explanation.`;
 
-const PER_SECTION_TIMEOUT_MS = 120000;
+const PER_SECTION_TIMEOUT_MS = 90000;
 
 async function generateSection(key, label, prompt) {
+  const start = Date.now();
   console.log(`[${key}] Generating ${label}...`);
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), PER_SECTION_TIMEOUT_MS);
   try {
     const response = await client.messages.create(
       {
         model: "claude-sonnet-4-6",
         max_tokens: 2048,
-        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 3 }],
+        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 2 }],
         system: SYSTEM,
         messages: [{ role: "user", content: prompt }],
       },
-      { signal: controller.signal }
+      { timeout: PER_SECTION_TIMEOUT_MS, maxRetries: 0 }
     );
 
     const text = response.content
@@ -105,14 +104,14 @@ async function generateSection(key, label, prompt) {
       .replace(/\n?```\s*$/i, "")
       .trim();
 
-    console.log(`[${key}] ✓ ${cleaned.length} chars`);
+    const elapsed = ((Date.now() - start) / 1000).toFixed(1);
+    console.log(`[${key}] ✓ ${cleaned.length} chars in ${elapsed}s`);
     return cleaned || `<div style="color:#cc0000;padding:12px;font-family:monospace;font-size:11px">${label.toUpperCase()} — NO CONTENT RETURNED</div>`;
   } catch (err) {
-    const msg = err.name === "AbortError" ? "timeout after 120s" : err.message;
-    console.error(`[${key}] ✗ ${msg}`);
+    const elapsed = ((Date.now() - start) / 1000).toFixed(1);
+    const msg = err.message || String(err);
+    console.error(`[${key}] ✗ ${msg} (after ${elapsed}s)`);
     return `<div style="color:#cc0000;padding:12px;font-family:monospace;font-size:11px">${label.toUpperCase()} — ${msg}</div>`;
-  } finally {
-    clearTimeout(timer);
   }
 }
 
