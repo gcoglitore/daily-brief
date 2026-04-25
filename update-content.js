@@ -96,6 +96,30 @@ const SYSTEM = `You are a senior intelligence analyst writing an open-source int
 
 const PER_SECTION_TIMEOUT_MS = 90000;
 
+// Auto-close any unclosed HTML tags so a truncated/malformed section response
+// can't cascade into the rest of the document layout.
+const VOID_TAGS = new Set(["br","img","hr","input","meta","link","area","base","col","source","track","wbr"]);
+function balanceHtmlTags(html) {
+  const stack = [];
+  const tagRe = /<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*?(\/?)>/g;
+  let m;
+  while ((m = tagRe.exec(html)) !== null) {
+    const full = m[0];
+    const name = m[1].toLowerCase();
+    if (VOID_TAGS.has(name) || full.endsWith("/>")) continue;
+    if (full.startsWith("</")) {
+      const idx = stack.lastIndexOf(name);
+      if (idx >= 0) stack.length = idx;
+    } else {
+      stack.push(name);
+    }
+  }
+  if (stack.length === 0) return html;
+  let suffix = "";
+  for (let i = stack.length - 1; i >= 0; i--) suffix += "</" + stack[i] + ">";
+  return html + suffix;
+}
+
 async function generateSection(key, label, prompt) {
   const start = Date.now();
   console.log(`[${key}] Generating ${label}...`);
@@ -103,7 +127,7 @@ async function generateSection(key, label, prompt) {
     const response = await client.messages.create(
       {
         model: "claude-sonnet-4-6",
-        max_tokens: 2048,
+        max_tokens: 4096,
         tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 2 }],
         system: SYSTEM,
         messages: [{ role: "user", content: prompt }],
@@ -117,10 +141,11 @@ async function generateSection(key, label, prompt) {
       .join("\n")
       .trim();
 
-    const cleaned = text
+    const stripped = text
       .replace(/^```(?:html)?\s*\n?/i, "")
       .replace(/\n?```\s*$/i, "")
       .trim();
+    const cleaned = balanceHtmlTags(stripped);
 
     const elapsed = ((Date.now() - start) / 1000).toFixed(1);
     console.log(`[${key}] ✓ ${cleaned.length} chars in ${elapsed}s`);
