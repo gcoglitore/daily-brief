@@ -171,7 +171,8 @@ const FALLBACK_PHOTO_DATA_URL = ""; // empty src → browser shows broken img pl
 const PHOTO_FEEDS = [
   "https://news.usni.org/feed",
   "https://www.navalnews.com/feed/",
-  "https://www.maritime-executive.com/articles/feed",
+  "https://gcaptain.com/feed/",
+  "https://www.maritime-executive.com/feed",
 ];
 
 function fetchUrl(url, opts = {}) {
@@ -195,28 +196,49 @@ function fetchUrl(url, opts = {}) {
   });
 }
 
-function extractFirstItem(rssXml) {
-  const itemMatch = rssXml.match(/<item\b[\s\S]*?<\/item>/);
-  if (!itemMatch) return null;
-  const item = itemMatch[0];
-  const title = (item.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/) || [])[1] || "";
-  // Try multiple image-extraction strategies in order of preference
-  let imgUrl =
-    (item.match(/<media:content[^>]+url="([^"]+\.(?:jpg|jpeg|png|webp))"/i) || [])[1] ||
-    (item.match(/<media:thumbnail[^>]+url="([^"]+)"/i) || [])[1] ||
-    (item.match(/<enclosure[^>]+url="([^"]+\.(?:jpg|jpeg|png|webp))"/i) || [])[1] ||
-    (item.match(/<img[^>]+src="([^"]+\.(?:jpg|jpeg|png|webp))/i) || [])[1] ||
-    null;
-  return imgUrl ? { title: title.replace(/<[^>]+>/g, "").trim(), imgUrl } : null;
+function extractItems(rssXml) {
+  const items = rssXml.match(/<item\b[\s\S]*?<\/item>/g) || [];
+  const out = [];
+  for (const item of items) {
+    const title = (item.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/) || [])[1] || "";
+    const imgUrl =
+      (item.match(/<media:content[^>]+url="([^"]+\.(?:jpg|jpeg|png|webp))"/i) || [])[1] ||
+      (item.match(/<media:thumbnail[^>]+url="([^"]+)"/i) || [])[1] ||
+      (item.match(/<enclosure[^>]+url="([^"]+\.(?:jpg|jpeg|png|webp))"/i) || [])[1] ||
+      (item.match(/<img[^>]+src="([^"]+\.(?:jpg|jpeg|png|webp))/i) || [])[1] ||
+      null;
+    if (imgUrl) out.push({ title: title.replace(/<[^>]+>/g, "").trim(), imgUrl });
+  }
+  return out;
+}
+
+function dayOfYear() {
+  const now = new Date();
+  const start = new Date(now.getUTCFullYear(), 0, 0);
+  const diff = now - start;
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
 async function fetchDailyPhoto() {
-  for (const feedUrl of PHOTO_FEEDS) {
+  // Rotate which feed is the primary source each day so the photo varies even
+  // when one feed hasn't published a fresh article yet today. The other feeds
+  // serve as fallbacks in their natural order.
+  const offset = (dayOfYear() + 1) % PHOTO_FEEDS.length;
+  const ordered = [...PHOTO_FEEDS.slice(offset), ...PHOTO_FEEDS.slice(0, offset)];
+  console.log(`[photo] Today's feed order: ${ordered.map(u => new URL(u).hostname).join(" → ")}`);
+
+  const dayIdx = dayOfYear();
+  for (const feedUrl of ordered) {
     try {
       console.log(`[photo] Trying ${feedUrl}...`);
       const xmlBuf = await fetchUrl(feedUrl);
-      const item = extractFirstItem(xmlBuf.toString("utf-8"));
-      if (!item) { console.log(`[photo]   no image in feed`); continue; }
+      const items = extractItems(xmlBuf.toString("utf-8"));
+      if (items.length === 0) { console.log(`[photo]   no image in feed`); continue; }
+      // Pick the (dayIdx % N)th item so the choice rotates daily even when the
+      // feed's first article doesn't change.
+      const pick = (dayIdx + 3) % items.length;
+      const item = items[pick];
+      console.log(`[photo]   ${items.length} items in feed, picking #${pick + 1}`);
       console.log(`[photo]   found: ${item.imgUrl}`);
       const imgBuf = await fetchUrl(item.imgUrl);
       const ext = (item.imgUrl.match(/\.(jpg|jpeg|png|webp)/i) || ["", "jpeg"])[1].toLowerCase().replace("jpg", "jpeg");
