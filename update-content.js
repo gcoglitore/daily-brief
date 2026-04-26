@@ -285,6 +285,19 @@ async function main() {
     content: await generateSection(k, SECTIONS[k].label, SECTIONS[k].prompt),
   }));
 
+  // Sanity check: refuse to deploy if any section returned an error stub.
+  // Better to keep yesterday's brief live than overwrite with red error boxes.
+  const failed = results.filter((r) => /color:#cc0000.*?(?:UNAVAILABLE|NO CONTENT RETURNED|—\s+\d{3}\s|Could not resolve|timeout)/.test(r.content));
+  if (failed.length > 0) {
+    console.error(`\n[FATAL] ${failed.length}/${results.length} sections failed:`);
+    for (const f of failed) {
+      const msg = (f.content.match(/—\s+([^<]+?)<\/div>/) || ["", "(unknown)"])[1].slice(0, 120);
+      console.error(`  - ${f.key}: ${msg}`);
+    }
+    console.error("Refusing to write public/index.html — yesterday's deploy stays live.");
+    process.exit(1);
+  }
+
   const photo = await photoPromise;
   let html = template
     .replaceAll("__DOC_NUMBER__", docNumber)
