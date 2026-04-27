@@ -26,6 +26,15 @@ function dateInfo() {
 
 const { dateFull } = dateInfo();
 
+function ukraineWarDay() {
+  const start = new Date("2022-02-24T00:00:00Z");
+  const today = new Date();
+  const days = Math.floor((today - start) / 86400000) + 1;
+  return days.toLocaleString();
+}
+const UKRAINE_DAY = ukraineWarDay();
+
+
 const STRUCTURE_REMINDER = `Use this exact HTML structure (no <style>, no <script>, no markdown code fences):
 <div class="region">
   <div class="rn">REGION OR TOPIC NAME <span class="badge bc">CRITICAL</span></div>
@@ -52,7 +61,7 @@ Output ONLY this raw HTML — no preamble, no code fences, no explanations.`;
 const SECTIONS = {
   exec: {
     label: "Executive Summary",
-    prompt: `Today is ${dateFull}. Search the web for today's most critical global security developments and write a 4-5 sentence Executive Summary covering: any active US-Iran/Middle East situation; current Russia-Ukraine war status (include Day count if you can compute it from Feb 24, 2022 start); any major Indo-Pacific or PLA activity; any other tier-1 items. Use <strong> tags around critical terms (specific countries, vessels, percentages, day counts, named officials). Wrap the entire summary in a single <p> tag. Begin with "(S)". Output ONLY the <p>...</p> HTML — no markdown fences, no preamble.`,
+    prompt: `Today is ${dateFull}. Search the web for today's most critical global security developments and write a 4-5 sentence Executive Summary covering: any active US-Iran/Middle East situation; current Russia-Ukraine war status — TODAY IS DAY ${UKRAINE_DAY} of the war (Feb 24, 2022 invasion start). USE EXACTLY "Day ${UKRAINE_DAY}" — do not guess from search results.; any major Indo-Pacific or PLA activity; any other tier-1 items. Use <strong> tags around critical terms (specific countries, vessels, percentages, day counts, named officials). Wrap the entire summary in a single <p> tag. Begin with "(S)". Output ONLY the <p>...</p> HTML — no markdown fences, no preamble.`,
   },
   reaction: {
     label: "Global Reaction (markets & headlines)",
@@ -68,7 +77,7 @@ const SECTIONS = {
   },
   s3: {
     label: "European Theater & NATO",
-    prompt: `Today is ${dateFull}. Search the web for current European/NATO developments. Cover: Russia-Ukraine war (include current day count from Feb 24, 2022), NATO Arctic activity, Russian threats to Baltic states, European defense initiatives. ${STRUCTURE_REMINDER}`,
+    prompt: `Today is ${dateFull}. Search the web for current European/NATO developments. Cover: Russia-Ukraine war (TODAY IS DAY ${UKRAINE_DAY} — use this exact figure, do NOT trust day counts from search results which are often outdated), NATO Arctic activity, Russian threats to Baltic states, European defense initiatives. ${STRUCTURE_REMINDER}`,
   },
   s4: {
     label: "U.S. Force Posture",
