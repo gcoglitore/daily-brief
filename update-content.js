@@ -62,6 +62,45 @@ function escapeHtml(str) {
     .replace(/'/g, "&#39;");
 }
 
+// Walk the final HTML for every <a class="cite-a" href="..."> citation,
+// bucket each hostname into gov / think-tank / press, and return a small
+// HTML meter showing today's source-diversity proportions. Renders nothing
+// if no citations made it into the document.
+const THINK_TANK_HOSTS = new Set([
+  "csis.org","www.csis.org","understandingwar.org","www.understandingwar.org",
+  "cfr.org","www.cfr.org","aei.org","www.aei.org","rusi.org","www.rusi.org",
+  "atlanticcouncil.org","www.atlanticcouncil.org","brookings.edu","www.brookings.edu",
+  "rand.org","www.rand.org","heritage.org","www.heritage.org",
+  "iiss.org","www.iiss.org","stimson.org","www.stimson.org",
+  "russiamatters.org","www.russiamatters.org","carnegieendowment.org","www.carnegieendowment.org",
+]);
+function buildSourceMeter(html) {
+  const cites = [...html.matchAll(/<a class="cite-a"[^>]*href="https:\/\/([^/"]+)/g)];
+  if (!cites.length) return "";
+  let gov = 0, tank = 0, press = 0;
+  for (const m of cites) {
+    const host = m[1].toLowerCase();
+    if (/\.(gov|mil)(\.|$)/.test(host) || host.endsWith(".gov") || host.endsWith(".mil")) gov++;
+    else if (THINK_TANK_HOSTS.has(host) || host.endsWith(".edu")) tank++;
+    else press++;
+  }
+  const total = gov + tank + press;
+  const pct = (n) => Math.round((n / total) * 100);
+  const pg = pct(gov), pt = pct(tank), pp = 100 - pg - pt;
+  return (
+    `<div class="meter" aria-label="Source mix">` +
+    `<span class="meter-label">SOURCING:</span>` +
+    `<span class="meter-bar" role="img" aria-label="${pg}% gov, ${pt}% think tank, ${pp}% press">` +
+    `<span class="meter-seg meter-gov" style="width:${pg}%" title="${gov} government source${gov===1?'':'s'}"></span>` +
+    `<span class="meter-seg meter-tank" style="width:${pt}%" title="${tank} think-tank source${tank===1?'':'s'}"></span>` +
+    `<span class="meter-seg meter-press" style="width:${pp}%" title="${press} press source${press===1?'':'s'}"></span>` +
+    `</span>` +
+    `<span class="meter-pct">${pg}% GOV · ${pt}% TANK · ${pp}% PRESS</span>` +
+    `<span class="meter-count">(${total} citations)</span>` +
+    `</div>`
+  );
+}
+
 // All date fields are computed in UTC so dateFull, docNumber, and timestamp
 // can never disagree (the previous mix of America/New_York for dateFull and
 // UTC for the doc-number/timestamp produced a day-mismatch every evening ET).
@@ -113,7 +152,7 @@ CITATIONS — REQUIRED: After every finding, append a <sup class="cite">...</sup
 
 DISSENTING VIEW — REQUIRED: Every <div class="kj"> must include a <details class="dissent">...</details> block presenting the strongest credible counter-argument to your key judgment. This is standard IC analytic tradecraft — even high-confidence judgments deserve a documented opposing view. Keep it to 1-2 sentences. Don't fabricate a contrarian view if no real one exists; if the judgment is uncontested, write "<p>No substantive contrarian analysis identified at this confidence level.</p>" instead.
 
-Output ONLY the HTML region divs — no preamble, no markdown fences, no explanation.`;
+TIER-1 FINDINGS — REQUIRED: Mark the 1–2 most consequential findings per region by adding the f-tier1 class — i.e. <div class="f f-tier1"> instead of <div class="f">. "Tier-1" means: highest analytical priority, would survive a 30-second skim. Typically the highest-badge regions (bc=critical) yield 2 tier-1 findings each; lower-badge regions may yield only 1 or 0. Findings without f-tier1 are still important but get hidden in skim mode. Output ONLY the HTML region divs — no preamble, no markdown fences, no explanation.`;
 
 const REACTION_STRUCTURE = `Use this exact HTML structure (no <style>, no <script>, no markdown fences). Output two blocks back-to-back:
 
@@ -604,6 +643,11 @@ async function main() {
     const safe = scrubSection(content);
     html = html.replace(re, `<!--CONTENT_START:${key}-->\n${safe}\n<!--CONTENT_END:${key}-->`);
   }
+
+  // Build the source-diversity meter from the citations that actually
+  // landed in the document, then substitute. Runs after all section
+  // substitutions so it sees every <a class="cite-a">.
+  html = html.replaceAll("__SOURCE_METER__", buildSourceMeter(html));
 
   // Strip the CONTENT_START/END build markers from the deployable HTML — they
   // were useful as substitution anchors but leak build internals if shipped.

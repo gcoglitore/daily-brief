@@ -56,7 +56,26 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
 .lv{display:flex;align-items:center;gap:6px;color:#0f5d76}
 .dot{width:6px;height:6px;background:#0f5d76;border-radius:50%;animation:blink 1.5s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.view-toggle{display:inline-flex;gap:0;border:1px solid #cdbf9a;border-radius:2px;overflow:hidden}
+.vt-btn{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:2px;padding:3px 10px;background:transparent;color:#5d5b51;border:0;cursor:pointer;transition:background 100ms ease}
+.vt-btn[aria-pressed="true"]{background:#103250;color:#d9bb73}
+.vt-btn:hover:not([aria-pressed="true"]){background:rgba(16,50,80,0.08)}
+.vt-btn:focus-visible{outline:2px solid #d9bb73;outline-offset:1px}
+.vt-btn+.vt-btn{border-left:1px solid #cdbf9a}
+body.tldr-on .f:not(.f-tier1){display:none}
+body.tldr-on .region .rn{margin-bottom:6px}
+body.tldr-on .reaction-card .mini,body.tldr-on .headline-tile span{display:none}
 .diff-block{background:#0a1826;color:#dcecf8;padding:18px 32px;border-bottom:1px solid #d9bb73}
+.meter{margin-top:14px;padding-top:12px;border-top:1px solid rgba(217,187,115,0.18);display:flex;align-items:center;gap:10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#8fb4d4;flex-wrap:wrap}
+.meter-label{letter-spacing:2px;color:#d9bb73;font-size:9px}
+.meter-bar{display:inline-flex;height:8px;flex:1;min-width:160px;max-width:280px;background:rgba(255,255,255,0.04);border:1px solid rgba(217,187,115,0.18);border-radius:1px;overflow:hidden}
+.meter-seg{display:block;height:100%}
+.meter-gov{background:#4a8c4a}
+.meter-tank{background:#d9bb73}
+.meter-press{background:#5b89b0}
+.meter-pct{letter-spacing:1px;color:#dcecf8;font-size:10px}
+.meter-count{color:#6a8aaa;font-size:9px;letter-spacing:1px}
+@media (max-width:640px){.meter{font-size:9px}.meter-bar{min-width:120px}}
 .diff-k{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:3px;color:#d9bb73;margin-bottom:12px}
 .diff-list{list-style:none;font-size:12px;line-height:1.6;color:#dcecf8}
 .diff-list li{padding:6px 0;display:flex;gap:10px;align-items:flex-start}
@@ -253,6 +272,10 @@ abbr.gloss:hover{border-bottom-style:solid;border-bottom-color:#0c4d78}
   <div class="tsb">
     <span>DSB DAILY INTELLIGENCE BRIEF // __DATE_FULL__</span>
     <div class="lv"><div class="dot"></div>LIVE — UPDATED __TIMESTAMP__</div>
+    <div class="view-toggle" role="group" aria-label="View mode">
+      <button type="button" class="vt-btn vt-full" data-mode="full" aria-pressed="true">FULL</button>
+      <button type="button" class="vt-btn vt-skim" data-mode="skim" aria-pressed="false">SKIM</button>
+    </div>
     <span>SOURCE: OSINT FUSION // <a class="src" href="https://www.dni.gov" target="_blank" rel="noopener">DNI</a> // <a class="src" href="https://news.usni.org" target="_blank" rel="noopener">USNI</a> // <a class="src" href="https://www.understandingwar.org" target="_blank" rel="noopener">ISW</a> // <a class="src" href="https://www.csis.org" target="_blank" rel="noopener">CSIS</a></span>
   </div>
 
@@ -261,6 +284,7 @@ abbr.gloss:hover{border-bottom-style:solid;border-bottom-color:#0c4d78}
     <div class="diff-k">// CHANGES SINCE LAST BRIEF</div>
     <!--CONTENT_START:diff-->
     <!--CONTENT_END:diff-->
+    __SOURCE_METER__
   </div>
 
   <!-- EXECUTIVE SUMMARY -->
@@ -395,6 +419,22 @@ function openFromHash(){
 }
 window.addEventListener('hashchange',openFromHash);
 openFromHash();
+// View mode toggle — FULL (default) vs SKIM (tier-1 findings only).
+// Mode persists across reloads via localStorage.
+(function(){
+  const KEY='dsb-view-mode';
+  const btns=document.querySelectorAll('.vt-btn');
+  if(!btns.length)return;
+  function apply(mode){
+    const skim=(mode==='skim');
+    document.body.classList.toggle('tldr-on',skim);
+    btns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
+    try{localStorage.setItem(KEY,mode);}catch(_){}
+  }
+  let saved='full';try{saved=localStorage.getItem(KEY)||'full';}catch(_){}
+  apply(saved==='skim'?'skim':'full');
+  btns.forEach(b=>b.addEventListener('click',()=>apply(b.dataset.mode)));
+})();
 // Live Zulu time
 function zu(){return new Date().toISOString().slice(11,16)+'Z';}
 document.getElementById('zt').textContent=zu();
