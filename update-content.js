@@ -15,11 +15,16 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 // event handlers, style, iframes — anything Claude shouldn't be emitting but
 // could slip through via indirect prompt injection in a web_search result.
 const SANITIZE_OPTIONS = {
-  allowedTags: ["div", "span", "p", "strong", "em", "b", "i", "br", "h4", "h5", "sup", "a"],
+  allowedTags: [
+    "div", "span", "p", "strong", "em", "b", "i", "br", "h4", "h5",
+    "sup", "a", "ul", "li", "details", "summary",
+  ],
   allowedAttributes: {
     "*": ["class"],
     "a": ["class", "href", "title", "target", "rel"],
     "sup": ["class"],
+    "details": ["class", "open"],
+    "summary": ["class"],
   },
   // Citations are https-only. Any javascript:, data:, http:, mailto:, etc.
   // gets the href stripped, leaving the link text as plain (clickless) span.
@@ -96,11 +101,17 @@ const STRUCTURE_REMINDER = `Use this exact HTML structure (no <style>, no <scrip
   <div class="rn">REGION OR TOPIC NAME <span class="badge bc">CRITICAL</span></div>
   <div class="f"><span class="fn">1.</span><span>(S) Finding text with <strong>key terms</strong> bolded.<sup class="cite"><a href="https://primary-source-url-1" title="publisher.com">1</a><a href="https://primary-source-url-2" title="publisher.com">2</a></sup></span></div>
   <div class="f"><span class="fn">2.</span><span>(S) ...<sup class="cite"><a href="https://...">1</a></sup></span></div>
-  <div class="kj"><div class="kjl">// KEY JUDGMENT — HIGH CONFIDENCE</div>Judgment text.</div>
+  <div class="kj">
+    <div class="kjl">// KEY JUDGMENT — HIGH CONFIDENCE</div>
+    Judgment text.
+    <details class="dissent"><summary>// DISSENTING VIEW</summary><p>The strongest opposing analysis: 1-2 sentences laying out the most credible counter-argument to the judgment above — what the contrarian case is, who holds it, why it could be right.</p></details>
+  </div>
 </div>
 Use multiple region blocks per section. Badge color classes: bc (red/critical), bh (orange/high), be (yellow/elevated), bm (blue/moderate). Begin findings with "(S)".
 
 CITATIONS — REQUIRED: After every finding, append a <sup class="cite">...</sup> containing 1–3 <a href="..."> links to the actual primary-source URLs you read via the web_search tool. Use ONLY https URLs that web_search returned in this turn — never fabricate or guess a URL. The link text is just the footnote number ("1", "2", "3"); put the publisher hostname in the title="" attribute. If web_search returned nothing usable for a finding, omit the <sup> entirely rather than invent a citation.
+
+DISSENTING VIEW — REQUIRED: Every <div class="kj"> must include a <details class="dissent">...</details> block presenting the strongest credible counter-argument to your key judgment. This is standard IC analytic tradecraft — even high-confidence judgments deserve a documented opposing view. Keep it to 1-2 sentences. Don't fabricate a contrarian view if no real one exists; if the judgment is uncontested, write "<p>No substantive contrarian analysis identified at this confidence level.</p>" instead.
 
 Output ONLY the HTML region divs — no preamble, no markdown fences, no explanation.`;
 
@@ -423,6 +434,62 @@ async function fetchTickerHeadlines() {
   return headlines.join(" · ");
 }
 
+// Fetch yesterday's deployed brief so we can ask Claude what changed.
+// Returns null on any failure (first deploy, network blip, etc.) so the
+// build never blocks on this — the diff block just renders a graceful
+// "no prior brief on file" stub.
+async function fetchYesterdayBrief() {
+  try {
+    const buf = await fetchUrl("https://themorningbrief-ai-fork.web.app/");
+    return buf.toString("utf-8");
+  } catch (e) {
+    console.log(`[diff] ✗ couldn't fetch yesterday: ${e.message}`);
+    return null;
+  }
+}
+
+// Strip an HTML doc down to readable text for Claude's diff prompt. Drops
+// <script>/<style>, inlined data: URLs (base64 portrait blobs that would
+// otherwise dominate the prompt), all tags, and collapses whitespace.
+// Capped at 12 KB so the prompt cost stays predictable.
+function stripHtmlChrome(html) {
+  if (!html || typeof html !== "string") return "";
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/data:image\/[^"]+/g, "[image]")
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 12000);
+}
+
+// Generate the "// CHANGES SINCE LAST BRIEF" diff block. Runs in parallel
+// with the other sections; uses web_search to find today's developments
+// and compares against the supplied yesterday-text.
+async function generateDiff(yesterdayText, dateFull) {
+  if (!yesterdayText) {
+    return `<ul class="diff-list"><li><strong class="diff-tag diff-tag-hold">HOLD</strong><span>No prior brief on file. Day-over-day diff resumes after the next 1000Z run.</span></li></ul>`;
+  }
+  const prompt = `Today is ${dateFull}. Compare yesterday's intelligence brief (below) against today's developments. Use the web_search tool to find what changed in the past 24 hours.
+
+Output a single <ul class="diff-list"> with 3-5 <li> items capturing the MOST consequential changes. Each <li> must start with one of these <strong> tags exactly:
+
+<strong class="diff-tag diff-tag-new">NEW</strong>     — an actor/event/program that did not exist in yesterday's brief
+<strong class="diff-tag diff-tag-up">UP</strong>      — an existing situation that escalated (more force, more lethality, more tension)
+<strong class="diff-tag diff-tag-down">DOWN</strong>  — an existing situation that de-escalated (ceasefire, withdrawal, agreement)
+<strong class="diff-tag diff-tag-hold">HOLD</strong>  — a situation that did not change but warrants continued watch
+
+Wrap the change text after the tag in a <span>. Append a <sup class="cite"> with 1-2 https <a href="..." title="hostname"> citation chips per <li>, using URLs returned by web_search. Output ONLY the <ul>...</ul> — no preamble, no code fences.
+
+YESTERDAY'S BRIEF (verbatim text):
+${yesterdayText}`;
+
+  return await generateSection("diff", "Day-over-day diff", prompt);
+}
+
 async function fetchDailyPhoto() {
   // Rotate which feed is the primary source each day so the photo varies even
   // when one feed hasn't published a fresh article yet today. The other feeds
@@ -480,15 +547,23 @@ async function main() {
 
   console.log(`Generating brief for ${dateFull} (${docNumber})`);
 
-  // Fetch daily photo in parallel with section generation (independent work)
+  // Fetch daily photo, ticker headlines, and yesterday's brief in parallel
+  // with section generation (all four streams are independent).
   const photoPromise = fetchDailyPhoto();
   const tickerPromise = fetchTickerHeadlines();
+  const yesterdayPromise = fetchYesterdayBrief().then(stripHtmlChrome);
 
   const keys = Object.keys(SECTIONS);
-  const results = await runInBatches(keys, 3, async (k) => ({
+  const sectionsPromise = runInBatches(keys, 3, async (k) => ({
     key: k,
     content: await generateSection(k, SECTIONS[k].label, SECTIONS[k].prompt),
   }));
+
+  // Kick off the day-over-day diff as soon as we have yesterday's text;
+  // it runs concurrently with the rest of the section batches.
+  const diffPromise = yesterdayPromise.then((yt) => generateDiff(yt, dateFull));
+
+  const results = await sectionsPromise;
 
   // Sanity check: refuse to deploy if any section returned an error stub.
   // Better to keep yesterday's brief live than overwrite with red error boxes.
@@ -503,7 +578,7 @@ async function main() {
     process.exit(1);
   }
 
-  const [photo, tickerBaked] = await Promise.all([photoPromise, tickerPromise]);
+  const [photo, tickerBaked, diffHtml] = await Promise.all([photoPromise, tickerPromise, diffPromise]);
   const isoDate = new Date().toISOString();
   let html = template
     .replaceAll("__DOC_NUMBER__", docNumber)
@@ -513,6 +588,14 @@ async function main() {
     .replaceAll("__PHOTO_DATA_URL__", photo.dataUrl)
     .replaceAll("__PHOTO_CAPTION__", escapeHtml(photo.caption))
     .replaceAll("__BREAKING_NEWS__", escapeHtml(tickerBaked));
+
+  // Substitute the diff block. The diff section uses the same content-marker
+  // pattern as the AI sections so the smoke-test step catches a leaked marker.
+  const safeDiff = scrubSection(diffHtml);
+  html = html.replace(
+    /<!--CONTENT_START:diff-->[\s\S]*?<!--CONTENT_END:diff-->/,
+    `<!--CONTENT_START:diff-->\n${safeDiff}\n<!--CONTENT_END:diff-->`
+  );
 
   for (const { key, content } of results) {
     const re = new RegExp(
