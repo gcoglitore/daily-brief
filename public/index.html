@@ -23,7 +23,7 @@
 <meta name="twitter:title" content="Daily Intelligence Brief">
 <meta name="twitter:description" content="Daily open-source intelligence brief — global security developments, force posture, and strategic indications & warning, regenerated every morning.">
 <meta name="twitter:image" content="https://themorningbrief-ai-fork.web.app/og-image.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"NewsArticle","headline":"Daily Intelligence Brief","description":"Daily open-source intelligence brief — global security developments, force posture, and strategic indications & warning, regenerated every morning.","image":"https://themorningbrief-ai-fork.web.app/og-image.png","url":"https://themorningbrief-ai-fork.web.app/","mainEntityOfPage":"https://themorningbrief-ai-fork.web.app/","datePublished":"2026-05-14T20:49:36.136Z","dateModified":"2026-05-14T20:49:36.136Z","publisher":{"@type":"Organization","name":"Daily Intelligence Brief"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"NewsArticle","headline":"Daily Intelligence Brief","description":"Daily open-source intelligence brief — global security developments, force posture, and strategic indications & warning, regenerated every morning.","image":"https://themorningbrief-ai-fork.web.app/og-image.png","url":"https://themorningbrief-ai-fork.web.app/","mainEntityOfPage":"https://themorningbrief-ai-fork.web.app/","datePublished":"2026-05-14T20:57:30.914Z","dateModified":"2026-05-14T20:57:30.914Z","publisher":{"@type":"Organization","name":"Daily Intelligence Brief"}}</script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%230c3b60'/><circle cx='32' cy='32' r='28' fill='none' stroke='%23d9bb73' stroke-width='3'/><path d='M32 8L36 30L56 32L36 34L32 56L28 34L8 32L28 30Z' fill='%23d9bb73'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -94,6 +94,12 @@ body.tldr-on .reaction-card .mini,body.tldr-on .headline-tile span{display:none}
 @media (max-width:640px){.diff-block{padding:14px}.diff-list li{flex-direction:column;gap:4px}.diff-tag{align-self:flex-start}}
 .exec{background:#103250;color:#d7e8f6;padding:24px 32px;border-bottom:3px solid #d9bb73}
 .watchlist{background:#f0e8d7;padding:16px 32px;border-bottom:1px solid #cdbf9a}
+.audio-brief{background:#0a1826;padding:14px 32px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #d9bb73;color:#dcecf8;flex-wrap:wrap}
+.audio-brief[hidden]{display:none}
+.ab-label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:3px;color:#d9bb73;flex-shrink:0}
+.ab-player{flex:1;min-width:240px;max-width:520px;height:36px}
+.ab-meta{font-family:'Share Tech Mono',monospace;font-size:10px;color:#8fb4d4}
+@media (max-width:640px){.audio-brief{padding:12px 14px;flex-direction:column;align-items:stretch;gap:8px}.ab-player{width:100%}}
 .posture-map{background:#06101a;padding:18px 32px;border-bottom:1px solid #d9bb73;color:#dcecf8}
 .pm-title{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:3px;color:#d9bb73;margin-bottom:10px}
 .pm-svg{width:100%;height:auto;max-height:360px;display:block;border:1px solid rgba(217,187,115,0.18);border-radius:3px;background:#06101a}
@@ -172,7 +178,29 @@ abbr.gloss:hover{border-bottom-style:solid;border-bottom-color:#0c4d78}
 .btt{position:fixed;bottom:20px;right:20px;width:44px;height:44px;border-radius:50%;background:#103250;color:#d9bb73;border:1px solid #d9bb73;cursor:pointer;font-family:'Oswald',sans-serif;font-size:18px;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,0.35);z-index:50;opacity:0;pointer-events:none;transition:opacity 180ms ease,transform 180ms ease;transform:translateY(8px)}
 .btt.show,.btt:focus-visible{opacity:1;pointer-events:auto;transform:translateY(0)}
 .btt:hover{background:#1a4970}
-@media (max-width:640px){.btt{bottom:14px;right:14px;width:40px;height:40px;font-size:16px}}
+.ask-btn{position:fixed;bottom:20px;right:74px;height:44px;padding:0 16px;border-radius:22px;background:#103250;color:#d9bb73;border:1px solid #d9bb73;cursor:pointer;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;box-shadow:0 4px 14px rgba(0,0,0,0.35);z-index:50}
+.ask-btn:hover{background:#1a4970}
+.ask-btn:focus-visible{outline:2px solid #d9bb73;outline-offset:2px}
+.ask-dialog{padding:0;border:1px solid #d9bb73;background:#0a1826;color:#dcecf8;max-width:480px;width:calc(100vw - 32px);max-height:80vh;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.ask-dialog::backdrop{background:rgba(0,0,0,0.55)}
+.ask-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(217,187,115,0.2);background:#103250}
+.ask-title{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:3px;color:#d9bb73}
+.ask-close{background:transparent;border:0;color:#d9bb73;font-size:14px;cursor:pointer;padding:4px 8px;line-height:1}
+.ask-close:hover{color:#fff}
+.ask-log{padding:14px;min-height:200px;max-height:46vh;overflow-y:auto;font-family:'Source Serif 4',Georgia,serif;font-size:13px;line-height:1.55;display:flex;flex-direction:column;gap:10px}
+.ask-msg{padding:8px 12px;border-radius:6px;max-width:90%;word-wrap:break-word}
+.ask-msg-user{align-self:flex-end;background:rgba(217,187,115,0.18);color:#f5fbff;border:1px solid rgba(217,187,115,0.3)}
+.ask-msg-assistant{align-self:flex-start;background:rgba(74,122,170,0.12);color:#dcecf8;border:1px solid rgba(74,122,170,0.3)}
+.ask-msg-loading{align-self:flex-start;color:#8fb4d4;font-family:'Share Tech Mono',monospace;font-size:11px;font-style:italic}
+.ask-msg-error{align-self:flex-start;background:rgba(204,0,0,0.15);color:#ff9870;border:1px solid #cc4422;font-family:'Share Tech Mono',monospace;font-size:11px}
+.ask-input-row{display:flex;gap:8px;padding:10px 14px;border-top:1px solid rgba(217,187,115,0.2)}
+.ask-input{flex:1;padding:8px 10px;background:#06101a;color:#f5fbff;border:1px solid rgba(217,187,115,0.3);border-radius:4px;font-family:'Source Serif 4',Georgia,serif;font-size:13px}
+.ask-input:focus{outline:1px solid #d9bb73;border-color:#d9bb73}
+.ask-send{background:#d9bb73;color:#0a1826;border:0;padding:0 16px;border-radius:4px;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;cursor:pointer}
+.ask-send:hover{background:#e8c987}
+.ask-send:disabled{opacity:0.5;cursor:wait}
+.ask-disclaimer{padding:0 14px 12px;font-family:'Share Tech Mono',monospace;font-size:9px;color:#6a8aaa;letter-spacing:1px}
+@media (max-width:640px){.btt{bottom:14px;right:14px;width:40px;height:40px;font-size:16px}.ask-btn{bottom:14px;right:60px;height:40px;padding:0 12px;font-size:10px}.ask-dialog{max-height:90vh;width:calc(100vw - 16px);margin:8px}.ask-log{max-height:40vh}}
 @media (max-width:640px){
   .cb{font-size:10px;letter-spacing:2px;padding:5px 8px}
   .hdr{padding:20px 16px;grid-template-columns:1fr;gap:0;text-align:center}
@@ -304,7 +332,7 @@ abbr.gloss:hover{border-bottom-style:solid;border-bottom-color:#0c4d78}
     <div class="podk">// PHOTO OF THE DAY — MARITIME POSTURE</div>
     <figure>
       <img id="photo-of-day" src="" alt="Commercial shipping transiting the Strait of Hormuz under elevated regional tension" width="1000" height="1500" loading="lazy">
-      <figcaption>Awaiting today&#39;s maritime photo feed (USNI / Naval News / Maritime Executive).</figcaption>
+      <figcaption>Awaiting today's maritime photo feed.</figcaption>
     </figure>
   </div>
   <div class="reaction">
@@ -312,12 +340,22 @@ abbr.gloss:hover{border-bottom-style:solid;border-bottom-color:#0c4d78}
     </div>
   <div class="tsb">
     <span>DSB DAILY INTELLIGENCE BRIEF // THURSDAY, MAY 14, 2026</span>
-    <div class="lv"><div class="dot"></div>LIVE — UPDATED 2049Z MAY 14, 2026</div>
+    <div class="lv"><div class="dot"></div>LIVE — UPDATED 2057Z MAY 14, 2026</div>
     <div class="view-toggle" role="group" aria-label="View mode">
       <button type="button" class="vt-btn vt-full" data-mode="full" aria-pressed="true">FULL</button>
       <button type="button" class="vt-btn vt-skim" data-mode="skim" aria-pressed="false">SKIM</button>
     </div>
     <span>SOURCE: OSINT FUSION // <a class="src" href="https://www.dni.gov" target="_blank" rel="noopener">DNI</a> // <a class="src" href="https://news.usni.org" target="_blank" rel="noopener">USNI</a> // <a class="src" href="https://www.understandingwar.org" target="_blank" rel="noopener">ISW</a> // <a class="src" href="https://www.csis.org" target="_blank" rel="noopener">CSIS</a></span>
+  </div>
+
+  <!-- AUDIO BRIEF -->
+  <div class="audio-brief" id="audio-brief" hidden>
+    <div class="ab-label">// AUDIO BRIEF</div>
+    <audio class="ab-player" controls preload="none">
+      <source src="/today.mp3" type="audio/mpeg">
+      Your browser doesn't support inline audio playback.
+    </audio>
+    <span class="ab-meta">Executive summary + key judgments · ~3 min</span>
   </div>
 
   <!-- DAY-OVER-DAY DIFF -->
@@ -338,7 +376,7 @@ abbr.gloss:hover{border-bottom-style:solid;border-bottom-color:#0c4d78}
   <!-- TODAY'S WATCHLIST -->
   <div class="watchlist">
     <div class="wl-title">// TODAY'S WATCHLIST</div>
-    <div class="wl-grid"><div class="wl-col"><div class="wl-cat">VESSELS</div><ul><li>Pending — awaiting today&#39;s feed.</li></ul></div><div class="wl-col"><div class="wl-cat">UNITS</div><ul><li>Pending — awaiting today&#39;s feed.</li></ul></div><div class="wl-col"><div class="wl-cat">OFFICIALS</div><ul><li>Pending — awaiting today&#39;s feed.</li></ul></div><div class="wl-col"><div class="wl-cat">WEAPONS</div><ul><li>Pending — awaiting today&#39;s feed.</li></ul></div></div>
+    <div class="wl-grid"><div class="wl-col"><div class="wl-cat">VESSELS</div><ul><li>Pending — awaiting today's feed.</li></ul></div><div class="wl-col"><div class="wl-cat">UNITS</div><ul><li>Pending — awaiting today's feed.</li></ul></div><div class="wl-col"><div class="wl-cat">OFFICIALS</div><ul><li>Pending — awaiting today's feed.</li></ul></div><div class="wl-col"><div class="wl-cat">WEAPONS</div><ul><li>Pending — awaiting today's feed.</li></ul></div></div>
   </div>
 
   <!-- GLOBAL POSTURE MAP -->
@@ -750,6 +788,19 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <button class="btt" type="button" aria-label="Back to top">↑</button>
+<button class="ask-btn" type="button" aria-label="Ask a question about this brief" aria-haspopup="dialog">ASK</button>
+<dialog class="ask-dialog" aria-label="Ask the brief">
+  <header class="ask-head">
+    <span class="ask-title">// ASK THE BRIEF</span>
+    <button class="ask-close" type="button" aria-label="Close">✕</button>
+  </header>
+  <div class="ask-log" role="log" aria-live="polite"></div>
+  <div class="ask-input-row">
+    <input type="text" class="ask-input" maxlength="500" placeholder="Question grounded in today's brief…" aria-label="Question">
+    <button class="ask-send" type="button">SEND</button>
+  </div>
+  <div class="ask-disclaimer">Answers from Claude — grounded only in today's brief. 30 questions / hr / IP.</div>
+</dialog>
 <script>
 (function(){
   const b=document.querySelector('.btt');
@@ -758,6 +809,80 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('scroll',onScroll,{passive:true});
   b.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
   onScroll();
+})();
+
+// Audio brief preflight — only reveal the player if /today.mp3 is actually
+// on the server. Keeps the page clean during fallback renders and when
+// OPENAI_API_KEY is unset on the CI side.
+(function(){
+  const box=document.getElementById('audio-brief');
+  if(!box)return;
+  fetch('/today.mp3',{method:'HEAD',cache:'no-store'})
+    .then(r=>{if(r.ok)box.hidden=false;})
+    .catch(()=>{/* leave hidden */});
+})();
+
+// Ask-the-brief chat drawer
+(function(){
+  const btn=document.querySelector('.ask-btn');
+  const dlg=document.querySelector('.ask-dialog');
+  if(!btn||!dlg||typeof dlg.showModal!=='function')return;
+  const closeBtn=dlg.querySelector('.ask-close');
+  const log=dlg.querySelector('.ask-log');
+  const input=dlg.querySelector('.ask-input');
+  const send=dlg.querySelector('.ask-send');
+
+  function addMsg(role,text){
+    const m=document.createElement('div');
+    m.className='ask-msg ask-msg-'+role;
+    m.textContent=text;
+    log.appendChild(m);
+    log.scrollTop=log.scrollHeight;
+    return m;
+  }
+
+  function getBriefText(){
+    const body=document.querySelector('.body');
+    if(!body)return '';
+    // Drop the photo data URL, scripts, and our own chat log to keep the
+    // payload tight. Body textContent already excludes <script>/<style>.
+    return body.textContent.replace(/\s+/g,' ').trim().slice(0,20000);
+  }
+
+  async function ask(){
+    const q=input.value.trim();
+    if(!q)return;
+    input.value='';
+    addMsg('user',q);
+    const loading=addMsg('loading','thinking…');
+    send.disabled=true;
+    try{
+      const r=await fetch('/api/ask',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({question:q,brief:getBriefText()}),
+      });
+      loading.remove();
+      let data={};
+      try{data=await r.json();}catch(_){}
+      if(!r.ok){
+        addMsg('error',data.error||('HTTP '+r.status));
+      }else{
+        addMsg('assistant',data.answer||'(empty response)');
+      }
+    }catch(e){
+      loading.remove();
+      addMsg('error',e.message||'Network error');
+    }finally{
+      send.disabled=false;
+      input.focus();
+    }
+  }
+
+  btn.addEventListener('click',()=>{dlg.showModal();setTimeout(()=>input.focus(),50);});
+  closeBtn.addEventListener('click',()=>dlg.close());
+  send.addEventListener('click',ask);
+  input.addEventListener('keydown',(e)=>{if(e.key==='Enter'){e.preventDefault();ask();}});
 })();
 </script>
 

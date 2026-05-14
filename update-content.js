@@ -593,6 +593,90 @@ ${yesterdayText}`;
   return await generateSection("diff", "Day-over-day diff", prompt);
 }
 
+// Render an MP3 audio brief from the executive summary + each section's
+// key judgments via OpenAI's tts-1 endpoint. Output: public/today.mp3.
+// Gracefully no-ops when OPENAI_API_KEY is unset so the build never fails
+// because of this optional feature.
+async function generateAudioBrief(execHtml, sectionResults) {
+  if (!process.env.OPENAI_API_KEY) {
+    console.log("[audio] OPENAI_API_KEY not set; skipping TTS");
+    return false;
+  }
+  const stripTags = (h) =>
+    String(h || "")
+      .replace(/<details[\s\S]*?<\/details>/gi, "") // skip dissenting view in audio
+      .replace(/<sup[\s\S]*?<\/sup>/gi, "")          // skip citation chip text
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const execText = stripTags(execHtml);
+  const kjs = [];
+  for (const { content } of sectionResults) {
+    const matches = content.matchAll(/<div class="kj">([\s\S]*?)<\/div>(?=\s*(?:<\/div>|<div class="region"))/g);
+    for (const m of matches) {
+      const t = stripTags(m[1]).replace(/^\/\/[^.]*/, "").trim();
+      if (t) kjs.push(t);
+    }
+  }
+  const script =
+    "Today's daily intelligence brief executive summary. " + execText +
+    (kjs.length ? "\n\nKey judgments. " + kjs.join(" ") : "");
+  const input = script.slice(0, 4000); // OpenAI tts-1 has a 4096-char cap
+
+  console.log(`[audio] requesting tts-1 for ${input.length} chars...`);
+
+  return new Promise((resolve) => {
+    const body = JSON.stringify({
+      model: "tts-1",
+      voice: "nova",
+      input,
+      response_format: "mp3",
+    });
+    const req = https.request(
+      {
+        hostname: "api.openai.com",
+        path: "/v1/audio/speech",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + process.env.OPENAI_API_KEY,
+          "Content-Length": Buffer.byteLength(body),
+        },
+        timeout: 60000,
+      },
+      (res) => {
+        const chunks = [];
+        res.on("data", (c) => chunks.push(c));
+        res.on("end", () => {
+          if (res.statusCode !== 200) {
+            console.log(`[audio] ✗ OpenAI returned ${res.statusCode}`);
+            resolve(false);
+            return;
+          }
+          const mp3 = Buffer.concat(chunks);
+          const outMp3 = path.join(__dirname, "public", "today.mp3");
+          fs.writeFileSync(outMp3 + ".tmp", mp3);
+          fs.renameSync(outMp3 + ".tmp", outMp3);
+          console.log(`[audio] ✓ wrote ${(mp3.length / 1024).toFixed(0)} KB to public/today.mp3`);
+          resolve(true);
+        });
+      }
+    );
+    req.on("error", (e) => {
+      console.log("[audio] ✗", e.message);
+      resolve(false);
+    });
+    req.on("timeout", () => {
+      req.destroy();
+      console.log("[audio] ✗ timeout");
+      resolve(false);
+    });
+    req.write(body);
+    req.end();
+  });
+}
+
 async function fetchDailyPhoto() {
   // Rotate which feed is the primary source each day so the photo varies even
   // when one feed hasn't published a fresh article yet today. The other feeds
@@ -681,6 +765,12 @@ async function main() {
     process.exit(1);
   }
 
+  // Fire-and-forget the TTS render. Awaited only so the eventual log line
+  // shows up before main() exits — the function always resolves and never
+  // throws, so the build doesn't fail when OPENAI_API_KEY is unset.
+  const execResult = results.find((r) => r.key === "exec");
+  const audioPromise = generateAudioBrief(execResult ? execResult.content : "", results);
+
   const [photo, tickerBaked, diffHtml] = await Promise.all([photoPromise, tickerPromise, diffPromise]);
   const isoDate = new Date().toISOString();
   let html = template
@@ -738,6 +828,10 @@ async function main() {
   fs.writeFileSync(tmpPath, html, "utf8");
   fs.renameSync(tmpPath, outPath);
   console.log(`Wrote ${outPath} (${html.length} chars)`);
+
+  // Block on the TTS request so logs land before the runner exits. Even on
+  // failure this resolves to a boolean — never rejects.
+  await audioPromise;
 }
 
 main().catch((err) => {

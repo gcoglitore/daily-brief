@@ -1,0 +1,12 @@
+{
+  "name": "daily-brief-functions",
+  "private": true,
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.91.1",
+    "firebase-functions": "5.1.1"
+  }
+}
