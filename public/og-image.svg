@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -15,11 +14,11 @@
     <circle cx="0" cy="0" r="100" fill="none" stroke="#d9bb73" stroke-width="2" stroke-opacity="0.4"/>
     <path d="M0 -80 L10 -10 L80 0 L10 10 L0 80 L-10 10 L-80 0 L-10 -10 Z" fill="#d9bb73"/>
   </g>
-  <g transform="translate(340 230)" font-family="'Oswald','Helvetica Neue',Arial,sans-serif">
+  <g transform="translate(340 230)" font-family="Impact,'Helvetica Neue Condensed','Arial Narrow',Arial,sans-serif">
     <text x="0" y="0" fill="#d9bb73" font-size="22" letter-spacing="6">// MARITIME WATCH FLOOR</text>
     <text x="0" y="80" fill="#f5fbff" font-size="78" letter-spacing="6" font-weight="700">DAILY INTELLIGENCE</text>
     <text x="0" y="156" fill="#f5fbff" font-size="78" letter-spacing="6" font-weight="700">BRIEF</text>
-    <text x="0" y="220" fill="#8fb4d4" font-size="20" letter-spacing="3" font-family="'Share Tech Mono','Courier New',monospace">OSINT FUSION // DNI // ISW // USNI // CSIS // NATO</text>
-    <text x="0" y="270" fill="#8fb4d4" font-size="18" letter-spacing="3" font-family="'Share Tech Mono','Courier New',monospace">Updated daily at 1000Z &#183; themorningbrief-ai-fork.web.app</text>
+    <text x="0" y="220" fill="#8fb4d4" font-size="20" letter-spacing="3" font-family="'Courier New',Consolas,monospace">OSINT FUSION // DNI // ISW // USNI // CSIS // NATO</text>
+    <text x="0" y="270" fill="#8fb4d4" font-size="18" letter-spacing="3" font-family="'Courier New',Consolas,monospace">Updated daily at 1000Z &#183; themorningbrief-ai-fork.web.app</text>
   </g>
 </svg>

@@ -28,6 +28,25 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node update-content.js
 
+      - name: Validate generated HTML
+        run: |
+          set -euo pipefail
+          if grep -E '__[A-Z_]+__' public/index.html; then
+            echo "FAIL: unsubstituted placeholder(s) found in public/index.html"
+            exit 1
+          fi
+          if grep -q '<!--CONTENT_START:' public/index.html; then
+            echo "FAIL: build markers leaked into deployable HTML"
+            exit 1
+          fi
+          opens=$(grep -oE '<div\b' public/index.html | wc -l)
+          closes=$(grep -oE '</div>' public/index.html | wc -l)
+          if [ "$opens" != "$closes" ]; then
+            echo "FAIL: <div> tag imbalance ($opens opens / $closes closes)"
+            exit 1
+          fi
+          echo "Smoke test OK: $opens balanced divs, no placeholders, no build markers"
+
       - name: Write service account credentials
         env:
           SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}

@@ -25,11 +25,27 @@ function scrubSection(html) {
   return sanitizeHtml(html, SANITIZE_OPTIONS);
 }
 
+// HTML-escape plain text that will be substituted into the HTML stream.
+// Used for the photo caption and the FLASH ticker headlines so that even a
+// malformed RSS title with a raw "<" can't break the markup.
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// All date fields are computed in UTC so dateFull, docNumber, and timestamp
+// can never disagree (the previous mix of America/New_York for dateFull and
+// UTC for the doc-number/timestamp produced a day-mismatch every evening ET).
+// The brief is published at 1000Z so UTC also matches the publication slug.
 function dateInfo() {
   const now = new Date();
   const dateFull = now.toLocaleDateString("en-US", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
-    timeZone: "America/New_York",
+    timeZone: "UTC",
   }).toUpperCase();
   const yy = now.getUTCFullYear().toString().slice(2);
   const mm = String(now.getUTCMonth() + 1).padStart(2, "0");
@@ -277,12 +293,17 @@ function extractTitles(rssXml, max) {
   for (const item of items) {
     if (out.length >= max) break;
     const raw = (item.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/) || [])[1] || "";
-    const title = raw.replace(/<[^>]+>/g, "")
+    // Decode HTML entities FIRST, then strip tags. Reversed order would let an
+    // attacker hide tags as &lt;script&gt; in a feed title — the strip pass
+    // wouldn't see them, then the decode would resurrect them as live HTML.
+    const decoded = raw
       .replace(/&amp;/g, "&")
       .replace(/&lt;/g, "<")
       .replace(/&gt;/g, ">")
       .replace(/&quot;/g, '"')
-      .replace(/&#39;|&apos;/g, "'")
+      .replace(/&#39;|&apos;/g, "'");
+    const title = decoded
+      .replace(/<[^>]+>/g, "")
       .replace(/\s+/g, " ")
       .trim();
     if (title.length >= 12 && title.length <= 180) out.push(title);
@@ -395,8 +416,8 @@ async function main() {
     .replaceAll("__DATE_FULL__", dateFull)
     .replaceAll("__TIMESTAMP__", timestamp)
     .replaceAll("__PHOTO_DATA_URL__", photo.dataUrl)
-    .replaceAll("__PHOTO_CAPTION__", photo.caption)
-    .replaceAll("__BREAKING_NEWS__", tickerBaked);
+    .replaceAll("__PHOTO_CAPTION__", escapeHtml(photo.caption))
+    .replaceAll("__BREAKING_NEWS__", escapeHtml(tickerBaked));
 
   for (const { key, content } of results) {
     const re = new RegExp(
@@ -406,8 +427,16 @@ async function main() {
     html = html.replace(re, `<!--CONTENT_START:${key}-->\n${safe}\n<!--CONTENT_END:${key}-->`);
   }
 
+  // Strip the CONTENT_START/END build markers from the deployable HTML — they
+  // were useful as substitution anchors but leak build internals if shipped.
+  html = html.replace(/<!--CONTENT_(?:START|END):[a-z0-9]+-->\n?/g, "");
+
+  // Atomic write: write to a sibling tmp file and rename. A crash mid-write
+  // can't leave a half-written index.html that firebase deploy might ship.
   const outPath = path.join(root, "public", "index.html");
-  fs.writeFileSync(outPath, html, "utf8");
+  const tmpPath = outPath + ".tmp";
+  fs.writeFileSync(tmpPath, html, "utf8");
+  fs.renameSync(tmpPath, outPath);
   console.log(`Wrote ${outPath} (${html.length} chars)`);
 }
 
