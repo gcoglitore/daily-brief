@@ -329,27 +329,36 @@ async function fetchPolymarketHeadlines(max = 3) {
     const url =
       "https://gamma-api.polymarket.com/markets?_limit=20&active=true&closed=false&order=volume24hr&ascending=false";
     const buf = await fetchUrl(url);
-    const markets = JSON.parse(buf.toString("utf-8"));
-    if (!Array.isArray(markets)) return [];
+    const raw = JSON.parse(buf.toString("utf-8"));
+    // Endpoint usually returns a bare array, but if it ever wraps in {data:[]}
+    // or {results:[]} accept that too rather than silently dropping all items.
+    const markets = Array.isArray(raw)
+      ? raw
+      : (Array.isArray(raw && raw.data) ? raw.data
+      : (Array.isArray(raw && raw.results) ? raw.results : []));
+    if (!markets.length) return [];
+
+    // outcomes / outcomePrices arrive as either real arrays OR JSON-encoded
+    // strings (the API is inconsistent). Handle both.
+    const parseArr = (v) => {
+      if (Array.isArray(v)) return v;
+      if (typeof v === "string") { try { return JSON.parse(v); } catch { return []; } }
+      return [];
+    };
     const out = [];
     for (const m of markets) {
       if (out.length >= max) break;
+      if (!m || typeof m !== "object") continue;
       const q = String(m.question || "").trim();
-      if (!q) continue;
-      // outcomes / outcomePrices arrive as either real arrays OR JSON-encoded
-      // strings (the API is inconsistent). Handle both.
-      const parseArr = (v) => {
-        if (Array.isArray(v)) return v;
-        if (typeof v === "string") { try { return JSON.parse(v); } catch { return []; } }
-        return [];
-      };
-      const outcomes = parseArr(m.outcomes);
+      if (!q || q.length < 5) continue;
+      const outcomes = parseArr(m.outcomes).filter((s) => typeof s === "string" && s.length > 0);
       const prices = parseArr(m.outcomePrices);
-      if (!outcomes.length || !prices.length) continue;
+      if (outcomes.length < 2 || prices.length < 2) continue;
       const pct = Math.round(Number(prices[0]) * 100);
       if (!Number.isFinite(pct) || pct < 1 || pct > 99) continue;
+      const outcome = String(outcomes[0]).slice(0, 24);
       const trimmedQ = q.length > 90 ? q.slice(0, 87).trimEnd() + "…" : q;
-      out.push(`Polymarket: ${trimmedQ} — ${outcomes[0]} ${pct}%`);
+      out.push(`Polymarket: ${trimmedQ} — ${outcome} ${pct}%`);
     }
     console.log(`[polymarket] ✓ ${out.length} markets`);
     return out;
@@ -360,26 +369,30 @@ async function fetchPolymarketHeadlines(max = 3) {
 }
 
 async function fetchTickerHeadlines() {
-  const headlines = [];
-  // Pull Polymarket first so prediction-market signal leads the ticker; RSS
-  // headlines follow. Cap at 8 total so the marquee stays scannable.
-  const polyItems = await fetchPolymarketHeadlines(3);
-  for (const t of polyItems) {
-    if (headlines.length < 8 && !headlines.includes(t)) headlines.push(t);
-  }
-  for (const feedUrl of TICKER_FEEDS) {
-    if (headlines.length >= 8) break;
+  // Kick off Polymarket and every RSS feed in parallel. Total wall time is now
+  // bounded by the slowest single source (~15s) rather than the sum.
+  const rssPromises = TICKER_FEEDS.map(async (feedUrl) => {
     try {
       const buf = await fetchUrl(feedUrl);
       const titles = extractTitles(buf.toString("utf-8"), 3);
-      for (const t of titles) {
-        if (headlines.length < 8 && !headlines.includes(t)) headlines.push(t);
-      }
       console.log(`[ticker] ✓ ${titles.length} from ${new URL(feedUrl).hostname}`);
+      return titles;
     } catch (e) {
       console.log(`[ticker] ✗ ${new URL(feedUrl).hostname}: ${e.message}`);
+      return [];
     }
-  }
+  });
+  const [polyItems, ...rssBuckets] = await Promise.all([
+    fetchPolymarketHeadlines(3),
+    ...rssPromises,
+  ]);
+
+  // Merge: Polymarket signal first, then RSS in feed order. Cap at 8 total
+  // so the marquee stays scannable.
+  const headlines = [];
+  const push = (t) => { if (headlines.length < 8 && !headlines.includes(t)) headlines.push(t); };
+  for (const t of polyItems) push(t);
+  for (const bucket of rssBuckets) for (const t of bucket) push(t);
   console.log(`[ticker] total prebaked: ${headlines.length}`);
   return headlines.join(" · ");
 }
@@ -465,10 +478,12 @@ async function main() {
   }
 
   const [photo, tickerBaked] = await Promise.all([photoPromise, tickerPromise]);
+  const isoDate = new Date().toISOString();
   let html = template
     .replaceAll("__DOC_NUMBER__", docNumber)
     .replaceAll("__DATE_FULL__", dateFull)
     .replaceAll("__TIMESTAMP__", timestamp)
+    .replaceAll("__ISO_DATE__", isoDate)
     .replaceAll("__PHOTO_DATA_URL__", photo.dataUrl)
     .replaceAll("__PHOTO_CAPTION__", escapeHtml(photo.caption))
     .replaceAll("__BREAKING_NEWS__", escapeHtml(tickerBaked));
