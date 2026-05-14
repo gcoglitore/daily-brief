@@ -15,11 +15,31 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 // event handlers, style, iframes — anything Claude shouldn't be emitting but
 // could slip through via indirect prompt injection in a web_search result.
 const SANITIZE_OPTIONS = {
-  allowedTags: ["div", "span", "p", "strong", "em", "b", "i", "br", "h4", "h5"],
-  allowedAttributes: { "*": ["class"] },
-  allowedSchemes: [],
+  allowedTags: ["div", "span", "p", "strong", "em", "b", "i", "br", "h4", "h5", "sup", "a"],
+  allowedAttributes: {
+    "*": ["class"],
+    "a": ["class", "href", "title", "target", "rel"],
+    "sup": ["class"],
+  },
+  // Citations are https-only. Any javascript:, data:, http:, mailto:, etc.
+  // gets the href stripped, leaving the link text as plain (clickless) span.
+  allowedSchemes: ["https"],
+  allowProtocolRelative: false,
   disallowedTagsMode: "discard",
   enforceHtmlBoundary: false,
+  transformTags: {
+    // Force every surviving <a> into a safe new-tab link with no opener and
+    // no referrer leak — Claude's prompt is supposed to set these but we
+    // belt-and-suspenders here against indirect prompt injection.
+    "a": (tagName, attribs) => {
+      const out = { class: "cite-a" };
+      if (attribs.href) out.href = attribs.href;
+      if (attribs.title) out.title = attribs.title;
+      out.target = "_blank";
+      out.rel = "noopener noreferrer nofollow";
+      return { tagName: "a", attribs: out };
+    },
+  },
 };
 function scrubSection(html) {
   return sanitizeHtml(html, SANITIZE_OPTIONS);
@@ -74,23 +94,29 @@ const UKRAINE_DAY = ukraineWarDay();
 const STRUCTURE_REMINDER = `Use this exact HTML structure (no <style>, no <script>, no markdown code fences):
 <div class="region">
   <div class="rn">REGION OR TOPIC NAME <span class="badge bc">CRITICAL</span></div>
-  <div class="f"><span class="fn">1.</span><span>(S) Finding text with <strong>key terms</strong> bolded.</span></div>
-  <div class="f"><span class="fn">2.</span><span>(S) ...</span></div>
+  <div class="f"><span class="fn">1.</span><span>(S) Finding text with <strong>key terms</strong> bolded.<sup class="cite"><a href="https://primary-source-url-1" title="publisher.com">1</a><a href="https://primary-source-url-2" title="publisher.com">2</a></sup></span></div>
+  <div class="f"><span class="fn">2.</span><span>(S) ...<sup class="cite"><a href="https://...">1</a></sup></span></div>
   <div class="kj"><div class="kjl">// KEY JUDGMENT — HIGH CONFIDENCE</div>Judgment text.</div>
 </div>
-Use multiple region blocks per section. Badge color classes: bc (red/critical), bh (orange/high), be (yellow/elevated), bm (blue/moderate). Begin findings with "(S)". Output ONLY the HTML region divs — no preamble, no markdown fences, no explanation.`;
+Use multiple region blocks per section. Badge color classes: bc (red/critical), bh (orange/high), be (yellow/elevated), bm (blue/moderate). Begin findings with "(S)".
+
+CITATIONS — REQUIRED: After every finding, append a <sup class="cite">...</sup> containing 1–3 <a href="..."> links to the actual primary-source URLs you read via the web_search tool. Use ONLY https URLs that web_search returned in this turn — never fabricate or guess a URL. The link text is just the footnote number ("1", "2", "3"); put the publisher hostname in the title="" attribute. If web_search returned nothing usable for a finding, omit the <sup> entirely rather than invent a citation.
+
+Output ONLY the HTML region divs — no preamble, no markdown fences, no explanation.`;
 
 const REACTION_STRUCTURE = `Use this exact HTML structure (no <style>, no <script>, no markdown fences). Output two blocks back-to-back:
 
 FIRST: a <div class="reaction-k">// GLOBAL REACTION — MARKETS & HEADLINES</div> followed by a <div class="reaction-grid"> containing exactly 4 reaction-card divs:
-<div class="reaction-card"><h4>Oil & inflation</h4><p>2-3 sentences on today's oil prices (Brent/WTI), inflation pressure, energy market.</p><span class="mini">SOURCE CUE // [PUBLISHER + DATE]</span></div>
-<div class="reaction-card"><h4>Gold & dollar</h4><p>2-3 sentences on safe-haven flows, gold movement, USD strength.</p><span class="mini">SOURCE CUE // [PUBLISHER + DATE]</span></div>
-<div class="reaction-card"><h4>Shipping signal</h4><p>2-3 sentences on key chokepoints, vessel disruptions, transit risk.</p><span class="mini">SOURCE CUE // [PUBLISHER + DATE]</span></div>
+<div class="reaction-card"><h4>Oil & inflation</h4><p>2-3 sentences on today's oil prices (Brent/WTI), inflation pressure, energy market.<sup class="cite"><a href="https://..." title="publisher.com">1</a></sup></p><span class="mini">SOURCE CUE // [PUBLISHER + DATE]</span></div>
+<div class="reaction-card"><h4>Gold & dollar</h4><p>2-3 sentences on safe-haven flows, gold movement, USD strength.<sup class="cite"><a href="https://..." title="publisher.com">1</a></sup></p><span class="mini">SOURCE CUE // [PUBLISHER + DATE]</span></div>
+<div class="reaction-card"><h4>Shipping signal</h4><p>2-3 sentences on key chokepoints, vessel disruptions, transit risk.<sup class="cite"><a href="https://..." title="publisher.com">1</a></sup></p><span class="mini">SOURCE CUE // [PUBLISHER + DATE]</span></div>
 <div class="reaction-card reaction-wide"><h4>Executive readout</h4><p>2-3 sentence cross-cutting analytic note tying the cards together.</p><span class="mini">ANALYTIC NOTE // [ONE-LINE TAKEAWAY]</span></div>
 
 SECOND: a <div class="headline-grid"> containing exactly 5 headline-tile divs in this order — United States, China, Russia, Iran, Europe:
-<div class="headline-tile"><h5>United States</h5><p>1-2 sentences on the US perspective today.</p><span>[PUBLISHER]</span></div>
+<div class="headline-tile"><h5>United States</h5><p>1-2 sentences on the US perspective today.<sup class="cite"><a href="https://..." title="publisher.com">1</a></sup></p><span>[PUBLISHER]</span></div>
 ... (repeat for China, Russia, Iran, Europe)
+
+CITATIONS — REQUIRED: every <p> ends with a <sup class="cite"> containing 1–2 https <a> links to actual URLs returned by web_search this turn. Never fabricate URLs. If web_search produced no usable source for one tile, omit the <sup>. The link text is the footnote number; the publisher hostname goes in title="".
 
 Output ONLY this raw HTML — no preamble, no code fences, no explanations.`;
 
