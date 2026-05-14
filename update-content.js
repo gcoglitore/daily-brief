@@ -313,7 +313,8 @@ async function main() {
     .replaceAll("__DATE_FULL__", dateFull)
     .replaceAll("__TIMESTAMP__", timestamp)
     .replaceAll("__PHOTO_DATA_URL__", photo.dataUrl)
-    .replaceAll("__PHOTO_CAPTION__", photo.caption);
+    .replaceAll("__PHOTO_CAPTION__", photo.caption)
+    .replaceAll("__BREAKING_NEWS__", "");
 
   for (const { key, content } of results) {
     const re = new RegExp(

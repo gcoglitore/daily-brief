@@ -329,7 +329,10 @@ function _buildTickerNode(items) {
 function _renderTicker() {
   const now = Date.now();
   _tickerItems = _tickerItems.filter(i => now - i.ts < TICKER_TTL);
-  if (!_tickerItems.length) return;
+  if (!_tickerItems.length) {
+    ['ticker-a','ticker-b'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = ''; });
+    return;
+  }
   ['ticker-a','ticker-b'].forEach(id => { const el = document.getElementById(id); if (!el) return; el.textContent = ''; el.appendChild(_buildTickerNode(_tickerItems)); });
   const track = document.getElementById('ticker-track');
   const a = document.getElementById('ticker-a');
