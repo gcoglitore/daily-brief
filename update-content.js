@@ -1,9 +1,29 @@
 #!/usr/bin/env node
 const Anthropic = require("@anthropic-ai/sdk");
+const sanitizeHtml = require("sanitize-html");
 const fs = require("fs");
 const path = require("path");
 
+if (!process.env.ANTHROPIC_API_KEY) {
+  console.error("FATAL: ANTHROPIC_API_KEY is not set. Refusing to run.");
+  process.exit(1);
+}
+
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+// Allow only the structural tags + classes the template expects. Strip scripts,
+// event handlers, style, iframes — anything Claude shouldn't be emitting but
+// could slip through via indirect prompt injection in a web_search result.
+const SANITIZE_OPTIONS = {
+  allowedTags: ["div", "span", "p", "strong", "em", "b", "i", "br", "h4", "h5"],
+  allowedAttributes: { "*": ["class"] },
+  allowedSchemes: [],
+  disallowedTagsMode: "discard",
+  enforceHtmlBoundary: false,
+};
+function scrubSection(html) {
+  return sanitizeHtml(html, SANITIZE_OPTIONS);
+}
 
 function dateInfo() {
   const now = new Date();
@@ -177,13 +197,34 @@ async function generateSection(key, label, prompt) {
 }
 
 // ── Daily photo of the day (naval/shipping news) ────────────
-const FALLBACK_PHOTO_DATA_URL = ""; // empty src → browser shows broken img placeholder; figure caption still renders.
+// Tiny inline SVG placeholder shown when every maritime RSS feed is down,
+// so the figure renders cleanly rather than a browser broken-image glyph.
+const FALLBACK_PHOTO_DATA_URL =
+  "data:image/svg+xml;utf8," +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">` +
+    `<rect width="1000" height="600" fill="#d8d2c6"/>` +
+    `<g fill="#5d5b51" font-family="'Share Tech Mono',monospace">` +
+    `<text x="500" y="290" font-size="32" text-anchor="middle" letter-spacing="3">PHOTO FEED UNAVAILABLE</text>` +
+    `<text x="500" y="330" font-size="16" text-anchor="middle" letter-spacing="2">USNI / NAVAL NEWS / GCAPTAIN / MARITIME EXECUTIVE</text>` +
+    `</g></svg>`
+  );
 
 const PHOTO_FEEDS = [
   "https://news.usni.org/feed",
   "https://www.navalnews.com/feed/",
   "https://gcaptain.com/feed/",
   "https://www.maritime-executive.com/feed",
+];
+
+// Headline feeds for the FLASH ticker. Pre-baked into the HTML at build time
+// so users see headlines on first paint even when api.allorigins.win (the
+// client-side CORS proxy) is unreachable. Client-side refresh in template.html
+// still runs on top of these as progressive enhancement.
+const TICKER_FEEDS = [
+  "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
+  "https://feeds.washingtonpost.com/rss/world",
+  "https://www.defense.gov/DesktopModules/ArticleCS/RSS.ashx?max=10&ContentType=1&Site=945",
 ];
 
 function fetchUrl(url, opts = {}) {
@@ -228,6 +269,44 @@ function dayOfYear() {
   const start = new Date(now.getUTCFullYear(), 0, 0);
   const diff = now - start;
   return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+function extractTitles(rssXml, max) {
+  const items = rssXml.match(/<item\b[\s\S]*?<\/item>|<entry\b[\s\S]*?<\/entry>/g) || [];
+  const out = [];
+  for (const item of items) {
+    if (out.length >= max) break;
+    const raw = (item.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/) || [])[1] || "";
+    const title = raw.replace(/<[^>]+>/g, "")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;|&apos;/g, "'")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (title.length >= 12 && title.length <= 180) out.push(title);
+  }
+  return out;
+}
+
+async function fetchTickerHeadlines() {
+  const headlines = [];
+  for (const feedUrl of TICKER_FEEDS) {
+    if (headlines.length >= 6) break;
+    try {
+      const buf = await fetchUrl(feedUrl);
+      const titles = extractTitles(buf.toString("utf-8"), 3);
+      for (const t of titles) {
+        if (headlines.length < 6 && !headlines.includes(t)) headlines.push(t);
+      }
+      console.log(`[ticker] ✓ ${titles.length} from ${new URL(feedUrl).hostname}`);
+    } catch (e) {
+      console.log(`[ticker] ✗ ${new URL(feedUrl).hostname}: ${e.message}`);
+    }
+  }
+  console.log(`[ticker] total prebaked: ${headlines.length}`);
+  return headlines.join(" · ");
 }
 
 async function fetchDailyPhoto() {
@@ -289,6 +368,7 @@ async function main() {
 
   // Fetch daily photo in parallel with section generation (independent work)
   const photoPromise = fetchDailyPhoto();
+  const tickerPromise = fetchTickerHeadlines();
 
   const keys = Object.keys(SECTIONS);
   const results = await runInBatches(keys, 3, async (k) => ({
@@ -309,20 +389,21 @@ async function main() {
     process.exit(1);
   }
 
-  const photo = await photoPromise;
+  const [photo, tickerBaked] = await Promise.all([photoPromise, tickerPromise]);
   let html = template
     .replaceAll("__DOC_NUMBER__", docNumber)
     .replaceAll("__DATE_FULL__", dateFull)
     .replaceAll("__TIMESTAMP__", timestamp)
     .replaceAll("__PHOTO_DATA_URL__", photo.dataUrl)
     .replaceAll("__PHOTO_CAPTION__", photo.caption)
-    .replaceAll("__BREAKING_NEWS__", "");
+    .replaceAll("__BREAKING_NEWS__", tickerBaked);
 
   for (const { key, content } of results) {
     const re = new RegExp(
       `<!--CONTENT_START:${key}-->[\\s\\S]*?<!--CONTENT_END:${key}-->`
     );
-    html = html.replace(re, `<!--CONTENT_START:${key}-->\n${content}\n<!--CONTENT_END:${key}-->`);
+    const safe = scrubSection(content);
+    html = html.replace(re, `<!--CONTENT_START:${key}-->\n${safe}\n<!--CONTENT_END:${key}-->`);
   }
 
   const outPath = path.join(root, "public", "index.html");
