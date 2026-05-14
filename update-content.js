@@ -175,6 +175,44 @@ const SECTIONS = {
     label: "Executive Summary",
     prompt: `Today is ${dateFull}. Search the web for today's most critical global security developments and write a 4-5 sentence Executive Summary covering: any active US-Iran/Middle East situation; current Russia-Ukraine war status — TODAY IS DAY ${UKRAINE_DAY} of the war (Feb 24, 2022 invasion start). USE EXACTLY "Day ${UKRAINE_DAY}" — do not guess from search results.; any major Indo-Pacific or PLA activity; any other tier-1 items. Use <strong> tags around critical terms (specific countries, vessels, percentages, day counts, named officials). Wrap the entire summary in a single <p> tag. Begin with "(S)". Output ONLY the <p>...</p> HTML — no markdown fences, no preamble.`,
   },
+  watchlist: {
+    label: "Today's Watchlist",
+    prompt: `Today is ${dateFull}. Search the web for today's most consequential security developments and identify the NAMED ENTITIES most actively in play right now. Bucket them into exactly four categories with 3-5 items each.
+
+Output ONLY this HTML — no preamble, no markdown fences:
+<div class="wl-grid">
+  <div class="wl-col">
+    <div class="wl-cat">VESSELS</div>
+    <ul>
+      <li>USS / HMS / FS / PLAN / etc. ship name (hull number) — current location or activity</li>
+      <li>...</li>
+    </ul>
+  </div>
+  <div class="wl-col">
+    <div class="wl-cat">UNITS</div>
+    <ul>
+      <li>Numbered unit, brigade, fleet, MEU, ARG, CSG, etc. — current activity</li>
+      <li>...</li>
+    </ul>
+  </div>
+  <div class="wl-col">
+    <div class="wl-cat">OFFICIALS</div>
+    <ul>
+      <li>Rank/title + name — role / statement made today</li>
+      <li>...</li>
+    </ul>
+  </div>
+  <div class="wl-col">
+    <div class="wl-cat">WEAPONS</div>
+    <ul>
+      <li>Weapons system / platform name — context (test, deployment, employment)</li>
+      <li>...</li>
+    </ul>
+  </div>
+</div>
+
+Keep each <li> under 90 characters. Cover all four COCOM theaters when possible (CENTCOM, INDOPACOM, EUCOM, AFRICOM). Only list entities that appeared in today's reporting — never fabricate. If a category genuinely has fewer than 3 entities today, output the ones you have and stop.`,
+  },
   reaction: {
     label: "Global Reaction (markets & headlines)",
     prompt: `Today is ${dateFull}. Search the web for today's market reaction to global security tensions: oil/Brent prices, gold movement, USD strength, key shipping chokepoints (especially Strait of Hormuz), and the headline narrative from the United States, China, Russia, Iran, and Europe. ${REACTION_STRUCTURE}`,
