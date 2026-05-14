@@ -23,7 +23,7 @@
 <meta name="twitter:title" content="Daily Intelligence Brief">
 <meta name="twitter:description" content="Daily open-source intelligence brief — global security developments, force posture, and strategic indications & warning, regenerated every morning.">
 <meta name="twitter:image" content="https://themorningbrief-ai-fork.web.app/og-image.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"NewsArticle","headline":"Daily Intelligence Brief","description":"Daily open-source intelligence brief — global security developments, force posture, and strategic indications & warning, regenerated every morning.","image":"https://themorningbrief-ai-fork.web.app/og-image.png","url":"https://themorningbrief-ai-fork.web.app/","mainEntityOfPage":"https://themorningbrief-ai-fork.web.app/","datePublished":"2026-05-14T19:29:15.255Z","dateModified":"2026-05-14T19:29:15.255Z","publisher":{"@type":"Organization","name":"Daily Intelligence Brief"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"NewsArticle","headline":"Daily Intelligence Brief","description":"Daily open-source intelligence brief — global security developments, force posture, and strategic indications & warning, regenerated every morning.","image":"https://themorningbrief-ai-fork.web.app/og-image.png","url":"https://themorningbrief-ai-fork.web.app/","mainEntityOfPage":"https://themorningbrief-ai-fork.web.app/","datePublished":"2026-05-14T19:37:07.715Z","dateModified":"2026-05-14T19:37:07.715Z","publisher":{"@type":"Organization","name":"Daily Intelligence Brief"}}</script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%230c3b60'/><circle cx='32' cy='32' r='28' fill='none' stroke='%23d9bb73' stroke-width='3'/><path d='M32 8L36 30L56 32L36 34L32 56L28 34L8 32L28 30Z' fill='%23d9bb73'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -90,6 +90,9 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
 .cite-a:hover,.cite-a:focus-visible{background:rgba(12,77,120,0.18);border-color:#0c4d78;color:#0c4d78}
 .kj .cite-a{background:rgba(217,187,115,0.12);color:#a57d1d;border-color:rgba(165,125,29,0.4)}
 .kj .cite-a:hover{background:rgba(217,187,115,0.25);border-color:#a57d1d;color:#a57d1d}
+abbr.gloss{border-bottom:1px dotted #6b6458;cursor:help;text-decoration:none}
+abbr.gloss:hover{border-bottom-style:solid;border-bottom-color:#0c4d78}
+.kj abbr.gloss{border-bottom-color:#a57d1d}
 .ft{background:#e7decb;padding:16px 32px;display:flex;justify-content:space-between;border-top:2px solid #cdbf9a;font-family:'Share Tech Mono',monospace;font-size:9px;color:#5d5b51}
 .src{color:inherit;text-decoration:none;border-bottom:1px dotted currentColor}
 .src:hover{border-bottom-style:solid}
@@ -228,7 +231,7 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
     </div>
   <div class="tsb">
     <span>DSB DAILY INTELLIGENCE BRIEF // THURSDAY, MAY 14, 2026</span>
-    <div class="lv"><div class="dot"></div>LIVE — UPDATED 1929Z MAY 14, 2026</div>
+    <div class="lv"><div class="dot"></div>LIVE — UPDATED 1937Z MAY 14, 2026</div>
     <span>SOURCE: OSINT FUSION // <a class="src" href="https://www.dni.gov" target="_blank" rel="noopener">DNI</a> // <a class="src" href="https://news.usni.org" target="_blank" rel="noopener">USNI</a> // <a class="src" href="https://www.understandingwar.org" target="_blank" rel="noopener">ISW</a> // <a class="src" href="https://www.csis.org" target="_blank" rel="noopener">CSIS</a></span>
   </div>
 
@@ -359,6 +362,87 @@ openFromHash();
 function zu(){return new Date().toISOString().slice(11,16)+'Z';}
 document.getElementById('zt').textContent=zu();
 setInterval(()=>{document.getElementById('zt').textContent=zu();},60000);
+
+// ─── ACRONYM HOVER-GLOSSARY ──────────────────
+// Scans every section's text once on load and wraps known military/intel
+// acronyms in <abbr title="..."> so readers can hover for the expansion.
+// Skips <script>, <style>, <abbr>, <a class=cite-a>, the FLASH ticker, and
+// the principal banner so labels there stay literal.
+const GLOSSARY = {
+  'AFRICOM':'U.S. Africa Command','ARG':'Amphibious Ready Group','AOR':'Area of Responsibility',
+  'AQAP':'Al-Qaeda in the Arabian Peninsula','ATA':'Annual Threat Assessment',
+  'BMD':'Ballistic Missile Defense','C2':'Command and Control',
+  'C4ISR':'Command, Control, Communications, Computers, Intelligence, Surveillance, Reconnaissance',
+  'CENTCOM':'U.S. Central Command (Middle East, Egypt, Central Asia)',
+  'CFR':'Council on Foreign Relations','CJCS':'Chairman of the Joint Chiefs of Staff',
+  'COMINT':'Communications Intelligence','CSG':'Carrier Strike Group',
+  'CSIS':'Center for Strategic and International Studies','CVN':'Aircraft Carrier (Nuclear-powered)',
+  'DDG':'Guided-Missile Destroyer','DEFCON':'Defense Readiness Condition',
+  'DNI':'Director of National Intelligence','DPRK':'Democratic People’s Republic of Korea (North Korea)',
+  'EEZ':'Exclusive Economic Zone','ELINT':'Electronic Intelligence',
+  'EUCOM':'U.S. European Command','FDNF':'Forward-Deployed Naval Forces',
+  'FPCON':'Force Protection Condition','HUMINT':'Human Intelligence',
+  'IADS':'Integrated Air Defense System','IC':'Intelligence Community',
+  'ICBM':'Intercontinental Ballistic Missile','IDF':'Israel Defense Forces',
+  'IMINT':'Imagery Intelligence','INDOPACOM':'U.S. Indo-Pacific Command',
+  'IRBM':'Intermediate-Range Ballistic Missile','IRGC':'Islamic Revolutionary Guard Corps (Iran)',
+  'ISIS-K':'ISIS Khorasan Province','ISW':'Institute for the Study of War',
+  'JCS':'Joint Chiefs of Staff','KPA':'Korean People’s Army (North Korea)',
+  'LHA':'Landing Helicopter Assault (amphibious assault ship)',
+  'LHD':'Landing Helicopter Dock (amphibious assault ship)',
+  'MASINT':'Measurement and Signature Intelligence','MEU':'Marine Expeditionary Unit',
+  'MIRV':'Multiple Independently Targetable Reentry Vehicles',
+  'MRBM':'Medium-Range Ballistic Missile','NATO':'North Atlantic Treaty Organization',
+  'NDS':'National Defense Strategy','NORTHCOM':'U.S. Northern Command',
+  'NSS':'National Security Strategy','ODNI':'Office of the Director of National Intelligence',
+  'OSINT':'Open Source Intelligence','PLA':'People’s Liberation Army (China)',
+  'PLAAF':'PLA Air Force','PLAN':'PLA Navy','PRC':'People’s Republic of China',
+  'ROK':'Republic of Korea (South Korea)','SACEUR':'Supreme Allied Commander Europe',
+  'SAM':'Surface-to-Air Missile','SDF':'Syrian Democratic Forces',
+  'SIGINT':'Signals Intelligence','SLBM':'Submarine-Launched Ballistic Missile',
+  'SOCOM':'U.S. Special Operations Command','SOUTHCOM':'U.S. Southern Command',
+  'SPACECOM':'U.S. Space Command','SRBM':'Short-Range Ballistic Missile',
+  'SSBN':'Ballistic-Missile Submarine (Nuclear)','SSN':'Attack Submarine (Nuclear)',
+  'STRATCOM':'U.S. Strategic Command','TEL':'Transporter-Erector-Launcher',
+  'TRANSCOM':'U.S. Transportation Command','USNI':'United States Naval Institute',
+  'VCJCS':'Vice Chairman of the Joint Chiefs of Staff'
+};
+(function(){
+  const terms=Object.keys(GLOSSARY).sort((a,b)=>b.length-a.length);
+  if(!terms.length)return;
+  const re=new RegExp('\\b('+terms.map(t=>t.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')).join('|')+')\\b','g');
+  const SKIP=new Set(['SCRIPT','STYLE','ABBR','TITLE','TEXTAREA','HEAD','NOSCRIPT']);
+  const SKIP_CLASS=new Set(['ticker-content','ticker-prefix','cite-a','seal','crest','p-name','p-role','p-eyebrow','ht','hs','hm']);
+  function shouldSkip(p){
+    while(p&&p!==document.body){
+      if(SKIP.has(p.nodeName))return true;
+      if(p.classList){for(const c of SKIP_CLASS){if(p.classList.contains(c))return true;}}
+      p=p.parentNode;
+    }
+    return false;
+  }
+  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{
+    acceptNode(n){if(!n.nodeValue||!n.nodeValue.match(re))return NodeFilter.FILTER_REJECT;return shouldSkip(n.parentNode)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT;}
+  });
+  const nodes=[];while(w.nextNode())nodes.push(w.currentNode);
+  let count=0;
+  for(const node of nodes){
+    const t=node.nodeValue;
+    re.lastIndex=0;
+    const frag=document.createDocumentFragment();
+    let last=0,m;
+    while((m=re.exec(t))!==null){
+      if(m.index>last)frag.appendChild(document.createTextNode(t.slice(last,m.index)));
+      const a=document.createElement('abbr');
+      a.className='gloss';a.title=GLOSSARY[m[1]];a.textContent=m[1];
+      frag.appendChild(a);
+      last=m.index+m[1].length;
+      count++;
+    }
+    if(last<t.length)frag.appendChild(document.createTextNode(t.slice(last)));
+    node.parentNode.replaceChild(frag,node);
+  }
+})();
 </script>
 
 <script>
