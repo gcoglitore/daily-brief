@@ -142,6 +142,8 @@ async function generateSection(key, label, prompt) {
   try {
     const response = await client.messages.create(
       {
+        // Pinned to Sonnet 4.6 (not a moving "latest" alias). Bump intentionally
+        // when validating a newer model's HTML output against this template.
         model: "claude-sonnet-4-6",
         max_tokens: 4096,
         tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 2 }],

@@ -10,15 +10,22 @@
 <meta property="og:title" content="Daily Intelligence Brief">
 <meta property="og:description" content="Daily open-source intelligence brief — global security developments, force posture, and strategic indications & warning, regenerated every morning.">
 <meta property="og:site_name" content="Daily Intelligence Brief">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://themorningbrief-ai-fork.web.app/og-image.svg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Daily Intelligence Brief — Maritime Watch Floor">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Daily Intelligence Brief">
 <meta name="twitter:description" content="Daily open-source intelligence brief — global security developments, force posture, and strategic indications & warning, regenerated every morning.">
+<meta name="twitter:image" content="https://themorningbrief-ai-fork.web.app/og-image.svg">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%230c3b60'/><circle cx='32' cy='32' r='28' fill='none' stroke='%23d9bb73' stroke-width='3'/><path d='M32 8L36 30L56 32L36 34L32 56L28 34L8 32L28 30Z' fill='%23d9bb73'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Share+Tech+Mono&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+:root{--cb-h:28px}
+@media (max-width:640px){:root{--cb-h:22px}}
 html{scroll-behavior:smooth}
 body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
 :focus-visible{outline:2px solid #d9bb73;outline-offset:2px;border-radius:2px}
@@ -47,7 +54,7 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
 .el{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:3px;color:#d9bb73;margin-bottom:10px}
 .et{font-size:13px;line-height:1.8}
 .et strong{color:white}
-.sec{border-bottom:1px solid #cdbf9a}
+.sec{border-bottom:1px solid #cdbf9a;scroll-margin-top:calc(var(--cb-h) + 34px + 8px)}
 .sh{background:#e7decb;padding:10px 32px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:2px solid #cdbf9a;transition:background 120ms ease}
 .sh:hover{background:#dfd2b6}
 .sh.o{background:#dfd2b6}
@@ -77,6 +84,10 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
 .ft{background:#e7decb;padding:16px 32px;display:flex;justify-content:space-between;border-top:2px solid #cdbf9a;font-family:'Share Tech Mono',monospace;font-size:9px;color:#5d5b51}
 .src{color:inherit;text-decoration:none;border-bottom:1px dotted currentColor}
 .src:hover{border-bottom-style:solid}
+.btt{position:fixed;bottom:20px;right:20px;width:44px;height:44px;border-radius:50%;background:#103250;color:#d9bb73;border:1px solid #d9bb73;cursor:pointer;font-family:'Oswald',sans-serif;font-size:18px;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,0.35);z-index:50;opacity:0;pointer-events:none;transition:opacity 180ms ease,transform 180ms ease;transform:translateY(8px)}
+.btt.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+.btt:hover{background:#1a4970}
+@media (max-width:640px){.btt{bottom:14px;right:14px;width:40px;height:40px;font-size:16px}}
 @media (max-width:640px){
   .cb{font-size:10px;letter-spacing:2px;padding:5px 8px}
   .hdr{padding:20px 16px;grid-template-columns:1fr;gap:0;text-align:center}
@@ -124,7 +135,7 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
 .p-role{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#d9bb73}
 @media (max-width:640px){.hdr{padding:12px 12px 10px!important}.seal{width:56px!important;height:56px!important;margin:0 auto 4px!important;padding:3px}.ht{font-size:14px!important;letter-spacing:1.5px!important}.tb{padding:6px 12px;gap:6px}.principal{padding:10px 12px;grid-template-columns:1fr;justify-items:center;text-align:center;gap:6px}.crest{width:46px;height:46px}.p-eyebrow{font-size:8px;letter-spacing:1px;margin-bottom:2px}.p-name{font-size:13px;letter-spacing:1px}.p-role{font-size:9px;letter-spacing:0.5px}.pod{padding:12px 14px!important}.podk{font-size:9px;letter-spacing:2px;margin-bottom:6px}}
 .pod{background:#f0e8d7;padding:18px 32px;border-bottom:1px solid #cdbf9a}.podk{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:3px;color:#0c4d78;margin-bottom:10px}.pod figure{margin:0}.pod img{width:100%;height:auto;max-height:420px;object-fit:contain;object-position:center;background:#d8d2c6;border:1px solid #cdbf9a;border-radius:12px;box-shadow:0 10px 28px rgba(1,18,33,.12)}.pod figcaption{margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:10px;line-height:1.6;color:#5d5b51}@media (max-width:640px){.pod{padding:14px}.pod img{max-height:260px}}.reaction{background:#f7f1e5;padding:16px 32px;border-bottom:1px solid #cdbf9a}.reaction-k{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:3px;color:#0c4d78;margin-bottom:12px}.reaction-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.reaction-card{background:#fffdf8;border:1px solid #d5c9a6;border-radius:12px;padding:12px 14px;box-shadow:0 6px 16px rgba(1,18,33,.06)}.reaction-card h4{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:1px;color:#102a43;text-transform:uppercase;margin-bottom:8px}.reaction-card p{font-size:12px;line-height:1.55;color:#2a2a2a;max-width:none}.reaction-card .mini{display:block;margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#6b6558}.reaction-wide{grid-column:span 3}.headline-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:12px}.headline-tile{background:#0f2437;color:#eef5fb;border-radius:12px;padding:12px;border:1px solid #1d3954}.headline-tile h5{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:1px;margin-bottom:6px;color:#d9bb73;text-transform:uppercase}.headline-tile p{font-size:11px;line-height:1.5;max-width:none;color:#e6edf5}.headline-tile span{display:block;margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:9px;color:#9fb3c8}@media (max-width:900px){.reaction-grid{grid-template-columns:1fr}.reaction-wide{grid-column:auto}.headline-grid{grid-template-columns:1fr 1fr}}@media (max-width:640px){.reaction{padding:14px}.headline-grid{grid-template-columns:1fr}}
-.ticker{background:#06101a;border-bottom:1px solid #d9bb73;display:flex;align-items:center;height:34px;overflow:hidden;position:sticky;top:32px;z-index:99}
+.ticker{background:#06101a;border-bottom:1px solid #d9bb73;display:flex;align-items:center;height:34px;overflow:hidden;position:sticky;top:var(--cb-h);z-index:99}
 .ticker-prefix{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:3px;color:#d9bb73;padding:0 14px;border-right:1px solid rgba(217,187,115,0.3);white-space:nowrap;height:100%;display:flex;align-items:center}
 .ticker-window{flex:1;overflow:hidden;position:relative;display:flex;align-items:center}
 .ticker-track{display:inline-flex;white-space:nowrap;animation:tickerScroll 90s linear infinite}
@@ -214,7 +225,7 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
   </div>
 
   <!-- SECTION I: MIDDLE EAST -->
-  <div class="sec">
+  <div class="sec" id="middle-east">
     <div class="sh" role="button" tabindex="0" aria-controls="s1" aria-expanded="false" onclick="tog('s1')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();tog('s1');}">
       <span class="sn">I.</span><span class="st">Middle East &amp; CENTCOM Theater</span>      <span id="a1" class="ar" aria-hidden="true" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
     </div>
@@ -225,7 +236,7 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
   </div>
 
   <!-- SECTION II: INDO-PACIFIC -->
-  <div class="sec">
+  <div class="sec" id="indo-pacific">
     <div class="sh" role="button" tabindex="0" aria-controls="s2" aria-expanded="false" onclick="tog('s2')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();tog('s2');}">
       <span class="sn">II.</span><span class="st">Indo-Pacific &amp; INDOPACOM Theater</span>      <span id="a2" class="ar" aria-hidden="true" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
     </div>
@@ -236,7 +247,7 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
   </div>
 
   <!-- SECTION III: EUROPE -->
-  <div class="sec">
+  <div class="sec" id="europe">
     <div class="sh" role="button" tabindex="0" aria-controls="s3" aria-expanded="false" onclick="tog('s3')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();tog('s3');}">
       <span class="sn">III.</span><span class="st">European Theater &amp; NATO</span>      <span id="a3" class="ar" aria-hidden="true" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
     </div>
@@ -247,7 +258,7 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
   </div>
 
   <!-- SECTION IV: FORCE POSTURE -->
-  <div class="sec">
+  <div class="sec" id="force-posture">
     <div class="sh" role="button" tabindex="0" aria-controls="s4" aria-expanded="false" onclick="tog('s4')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();tog('s4');}">
       <span class="sn">IV.</span><span class="st">U.S. Force Posture &amp; Naval Disposition</span>      <span id="a4" class="ar" aria-hidden="true" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
     </div>
@@ -258,7 +269,7 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
   </div>
 
   <!-- SECTION V: CYBER -->
-  <div class="sec">
+  <div class="sec" id="cyber">
     <div class="sh" role="button" tabindex="0" aria-controls="s5" aria-expanded="false" onclick="tog('s5')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();tog('s5');}">
       <span class="sn">V.</span><span class="st">Cyber &amp; Information Warfare</span>      <span id="a5" class="ar" aria-hidden="true" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
     </div>
@@ -269,7 +280,7 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
   </div>
 
   <!-- SECTION VI: WMD -->
-  <div class="sec">
+  <div class="sec" id="nuclear">
     <div class="sh" role="button" tabindex="0" aria-controls="s6" aria-expanded="false" onclick="tog('s6')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();tog('s6');}">
       <span class="sn">VI.</span><span class="st">WMD, Strategic &amp; Nuclear Watch</span>      <span id="a6" class="ar" aria-hidden="true" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
     </div>
@@ -280,7 +291,7 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
   </div>
 
   <!-- SECTION VII: TERRORISM -->
-  <div class="sec">
+  <div class="sec" id="terrorism">
     <div class="sh" role="button" tabindex="0" aria-controls="s7" aria-expanded="false" onclick="tog('s7')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();tog('s7');}">
       <span class="sn">VII.</span><span class="st">Terrorism &amp; Transnational Threats</span>      <span id="a7" class="ar" aria-hidden="true" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
     </div>
@@ -291,7 +302,7 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
   </div>
 
   <!-- SECTION VIII: ARCTIC -->
-  <div class="sec">
+  <div class="sec" id="arctic">
     <div class="sh" role="button" tabindex="0" aria-controls="s8" aria-expanded="false" onclick="tog('s8')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();tog('s8');}">
       <span class="sn">VIII.</span><span class="st">Arctic &amp; High North Operations</span>      <span id="a8" class="ar" aria-hidden="true" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#6b6458">▼</span>
     </div>
@@ -322,6 +333,20 @@ function tog(id){
   const b=document.getElementById(id);
   if(b){b.style.display='none';b.classList.remove('o');}
 });
+// Open + scroll-to whichever section a deep link points at.
+// Slug map mirrors the id="" on each .sec wrapper.
+const SECTION_SLUGS={'middle-east':'s1','indo-pacific':'s2','europe':'s3','force-posture':'s4','cyber':'s5','nuclear':'s6','terrorism':'s7','arctic':'s8'};
+function openFromHash(){
+  const slug=(location.hash||'').replace('#','');
+  const sid=SECTION_SLUGS[slug];
+  if(!sid)return;
+  const body=document.getElementById(sid);
+  if(body&&!body.classList.contains('o'))tog(sid);
+  const sec=document.getElementById(slug);
+  if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'});
+}
+window.addEventListener('hashchange',openFromHash);
+openFromHash();
 // Live Zulu time
 function zu(){return new Date().toISOString().slice(11,16)+'Z';}
 document.getElementById('zt').textContent=zu();
@@ -414,6 +439,18 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(refreshTicker, 15 * 60 * 1000);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refreshTicker(); });
 });
+</script>
+
+<button class="btt" type="button" aria-label="Back to top">↑</button>
+<script>
+(function(){
+  const b=document.querySelector('.btt');
+  if(!b)return;
+  const onScroll=()=>{ if(window.scrollY>600) b.classList.add('show'); else b.classList.remove('show'); };
+  window.addEventListener('scroll',onScroll,{passive:true});
+  b.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  onScroll();
+})();
 </script>
 
 </body>
