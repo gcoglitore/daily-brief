@@ -49,6 +49,11 @@ body{background:#07131f;font-family:'Source Serif 4',Georgia,serif}
 .tl.a{opacity:1}
 .tle{color:#d9bb73;border-color:#d9bb73!important}
 .dc{margin-left:auto;display:flex;align-items:center;gap:10px;color:#8fb4d4}
+.tl-spark{display:inline-flex;align-items:center;gap:6px;margin-left:16px;font-family:'Share Tech Mono',monospace;font-size:9px;color:#8fb4d4;letter-spacing:1px}
+.tl-spark-label{color:#d9bb73}
+.tl-spark-svg{width:80px;height:18px;border:1px solid rgba(217,187,115,0.2);background:rgba(255,255,255,0.03);border-radius:1px}
+.tl-spark-count{color:#6a8aaa}
+@media (max-width:640px){.tl-spark{margin-left:0}}
 .dv{background:#0b4c78;color:#f5fbff;padding:3px 12px;border:1px solid #5ea3cf;font-weight:bold;letter-spacing:2px;animation:pulse 3s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(94,163,207,0.35)}50%{box-shadow:0 0 0 6px rgba(94,163,207,0)}}
 .body{background:#f4efe2;max-width:960px;margin:0 auto;box-shadow:0 0 40px rgba(1,18,33,0.55)}
@@ -89,6 +94,25 @@ body.tldr-on .reaction-card .mini,body.tldr-on .headline-tile span{display:none}
 @media (max-width:640px){.diff-block{padding:14px}.diff-list li{flex-direction:column;gap:4px}.diff-tag{align-self:flex-start}}
 .exec{background:#103250;color:#d7e8f6;padding:24px 32px;border-bottom:3px solid #d9bb73}
 .watchlist{background:#f0e8d7;padding:16px 32px;border-bottom:1px solid #cdbf9a}
+.posture-map{background:#06101a;padding:18px 32px;border-bottom:1px solid #d9bb73;color:#dcecf8}
+.pm-title{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:3px;color:#d9bb73;margin-bottom:10px}
+.pm-svg{width:100%;height:auto;max-height:360px;display:block;border:1px solid rgba(217,187,115,0.18);border-radius:3px;background:#06101a}
+.pm-theater{fill:rgba(154,154,154,0.18);stroke:rgba(217,187,115,0.4);stroke-width:1;transition:fill 120ms ease,stroke 120ms ease;cursor:pointer}
+.pm-svg a:hover .pm-theater,.pm-svg a:focus-visible .pm-theater{stroke-width:2}
+.pm-svg a:focus-visible{outline:none}
+.pm-theater.pm-bc{fill:rgba(204,0,0,0.32);stroke:#cc0000}
+.pm-theater.pm-bh{fill:rgba(220,100,30,0.32);stroke:#dd6622}
+.pm-theater.pm-be{fill:rgba(212,160,23,0.32);stroke:#d4a017}
+.pm-theater.pm-bm{fill:rgba(74,122,170,0.32);stroke:#4a7aaa}
+.pm-label{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;fill:#f5fbff;text-anchor:middle;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,0.6)}
+.pm-legend{display:flex;gap:14px;margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#8fb4d4;flex-wrap:wrap}
+.pm-leg-item{display:inline-flex;align-items:center;gap:6px;letter-spacing:1px}
+.pm-leg-swatch{width:10px;height:10px;border-radius:2px;display:inline-block}
+.pm-leg-swatch.pm-bc{background:rgba(204,0,0,0.32);border:1px solid #cc0000}
+.pm-leg-swatch.pm-bh{background:rgba(220,100,30,0.32);border:1px solid #dd6622}
+.pm-leg-swatch.pm-be{background:rgba(212,160,23,0.32);border:1px solid #d4a017}
+.pm-leg-swatch.pm-bm{background:rgba(74,122,170,0.32);border:1px solid #4a7aaa}
+@media (max-width:640px){.posture-map{padding:14px}.pm-label{font-size:11px}.pm-legend{font-size:9px;gap:8px}}
 .wl-title{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:3px;color:#0c4d78;margin-bottom:12px}
 .wl-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .wl-col{background:#fffdf8;border:1px solid #d5c9a6;border-radius:8px;padding:10px 12px}
@@ -240,6 +264,14 @@ abbr.gloss:hover{border-bottom-style:solid;border-bottom-color:#0c4d78}
     <div class="tl" style="color:#0c4d78">GALE</div>
   </div>
   <div class="dc"><span>SEA STATE:</span><span class="dv">3</span><span style="margin-left:16px">WATCH: BLUE WATER</span></div>
+  <div class="tl-spark" data-defcon="3" data-seastate="3" aria-label="Sea-state trend">
+    <span class="tl-spark-label">TREND:</span>
+    <svg class="tl-spark-svg" viewBox="0 0 80 18" preserveAspectRatio="none" aria-hidden="true">
+      <polyline class="tl-spark-line" fill="none" stroke="#d9bb73" stroke-width="1.5" points=""/>
+      <circle class="tl-spark-dot" cx="0" cy="0" r="2" fill="#d9bb73" style="display:none"/>
+    </svg>
+    <span class="tl-spark-count">—</span>
+  </div>
 </div>
 <div class="body">
   <div class="principal">
@@ -311,6 +343,74 @@ abbr.gloss:hover{border-bottom-style:solid;border-bottom-color:#0c4d78}
     <div class="wl-title">// TODAY'S WATCHLIST</div>
     <!--CONTENT_START:watchlist-->
     <!--CONTENT_END:watchlist-->
+  </div>
+
+  <!-- GLOBAL POSTURE MAP -->
+  <div class="posture-map">
+    <div class="pm-title">// GLOBAL POSTURE — THEATER SEVERITY AT 1000Z</div>
+    <svg class="pm-svg" viewBox="0 0 800 380" role="img" aria-label="World map with five active theaters tinted by current threat severity">
+      <title>Global threat posture by theater</title>
+      <rect width="800" height="380" fill="#06101a"/>
+      <!-- latitude grid (subtle) -->
+      <g stroke="rgba(217,187,115,0.08)" stroke-width="1" fill="none">
+        <line x1="0" y1="95" x2="800" y2="95"/>
+        <line x1="0" y1="190" x2="800" y2="190"/>
+        <line x1="0" y1="285" x2="800" y2="285"/>
+        <line x1="200" y1="0" x2="200" y2="380"/>
+        <line x1="400" y1="0" x2="400" y2="380"/>
+        <line x1="600" y1="0" x2="600" y2="380"/>
+      </g>
+      <!-- continents (simplified silhouettes) -->
+      <g fill="#1a3050" stroke="#0c4d78" stroke-width="0.5" opacity="0.85">
+        <!-- North America -->
+        <path d="M50 70 Q90 50 140 55 Q200 50 240 70 L260 110 Q275 140 250 165 L210 175 Q175 195 145 175 L110 160 Q85 145 70 120 Q55 95 50 70 Z"/>
+        <!-- South America -->
+        <path d="M210 200 Q240 195 260 215 L270 250 Q275 290 260 320 L240 340 Q220 335 215 305 Q205 270 210 235 Z"/>
+        <!-- Greenland -->
+        <path d="M275 35 Q300 30 320 45 L325 75 Q310 90 290 85 Q275 75 275 50 Z"/>
+        <!-- Europe + W Asia (Eurasia western chunk) -->
+        <path d="M375 65 Q420 55 460 65 L500 75 Q525 90 530 115 L520 135 Q495 145 470 140 L440 130 L405 135 Q380 125 375 100 Z"/>
+        <!-- Africa -->
+        <path d="M390 145 Q425 140 455 155 L465 195 Q470 240 450 270 L420 280 Q400 270 395 240 Q385 200 390 165 Z"/>
+        <!-- Asia + Russia (Eurasia eastern chunk) -->
+        <path d="M520 55 Q580 45 640 50 Q700 55 740 70 L760 95 Q765 130 745 155 L700 175 Q650 180 605 165 L560 145 Q530 125 525 100 Z"/>
+        <!-- Indian subcontinent -->
+        <path d="M610 165 Q625 165 635 180 L640 205 Q625 220 615 205 Q605 190 610 175 Z"/>
+        <!-- SE Asia / Indonesia -->
+        <path d="M660 200 Q690 200 715 215 L720 230 Q700 240 670 235 Q650 225 660 210 Z"/>
+        <!-- Australia -->
+        <path d="M680 270 Q720 265 745 280 L750 300 Q730 315 695 310 Q670 300 680 280 Z"/>
+        <!-- Japan -->
+        <path d="M740 130 L750 145 L745 165 L735 155 Z"/>
+      </g>
+      <!-- THEATER OVERLAYS — each linked to its section anchor -->
+      <a href="#middle-east" aria-label="Middle East &amp; CENTCOM theater">
+        <rect class="pm-theater __PM_S1__" x="465" y="115" width="100" height="55" rx="3"/>
+        <text class="pm-label" x="515" y="146">CENTCOM</text>
+      </a>
+      <a href="#indo-pacific" aria-label="Indo-Pacific &amp; INDOPACOM theater">
+        <rect class="pm-theater __PM_S2__" x="620" y="120" width="140" height="120" rx="3"/>
+        <text class="pm-label" x="690" y="184">INDOPACOM</text>
+      </a>
+      <a href="#europe" aria-label="European theater &amp; NATO">
+        <rect class="pm-theater __PM_S3__" x="370" y="55" width="170" height="80" rx="3"/>
+        <text class="pm-label" x="455" y="100">EUCOM</text>
+      </a>
+      <a href="#arctic" aria-label="Arctic &amp; High North">
+        <rect class="pm-theater __PM_S8__" x="200" y="0" width="540" height="40" rx="3"/>
+        <text class="pm-label" x="470" y="26">HIGH NORTH</text>
+      </a>
+      <a href="#force-posture" aria-label="U.S. Force Posture &amp; Naval Disposition">
+        <rect class="pm-theater __PM_S4__" x="20" y="55" width="240" height="125" rx="3"/>
+        <text class="pm-label" x="140" y="121">NORTHCOM / USFF</text>
+      </a>
+    </svg>
+    <div class="pm-legend">
+      <span class="pm-leg-item"><span class="pm-leg-swatch pm-bc"></span>CRITICAL</span>
+      <span class="pm-leg-item"><span class="pm-leg-swatch pm-bh"></span>HIGH</span>
+      <span class="pm-leg-item"><span class="pm-leg-swatch pm-be"></span>ELEVATED</span>
+      <span class="pm-leg-item"><span class="pm-leg-swatch pm-bm"></span>MODERATE</span>
+    </div>
   </div>
 
   <!-- SECTION I: MIDDLE EAST -->
@@ -451,6 +551,49 @@ openFromHash();
   let saved='full';try{saved=localStorage.getItem(KEY)||'full';}catch(_){}
   apply(saved==='skim'?'skim':'full');
   btns.forEach(b=>b.addEventListener('click',()=>apply(b.dataset.mode)));
+})();
+// Threat-trend sparkline — per-visitor history of the daily sea-state /
+// DEFCON readout. Stored in localStorage so it's not user-tracking; just a
+// local memory of what each visitor has seen on past visits.
+(function(){
+  const KEY='dsb-threat-history';
+  const MAX=14;
+  const root=document.querySelector('.tl-spark');
+  if(!root)return;
+  const today=root.getAttribute('data-seastate')||root.getAttribute('data-defcon')||'';
+  const docNum=document.querySelector('.hm span')?document.querySelector('.hm span').textContent.trim():String(Date.now());
+  if(!today||!docNum)return;
+  let hist=[];
+  try{hist=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(hist))hist=[];}catch(_){}
+  if(!hist.length||hist[hist.length-1].id!==docNum){
+    hist.push({id:docNum,v:Number(today)||0});
+    if(hist.length>MAX)hist=hist.slice(-MAX);
+    try{localStorage.setItem(KEY,JSON.stringify(hist));}catch(_){}
+  }
+  const svg=root.querySelector('.tl-spark-svg');
+  const poly=root.querySelector('.tl-spark-line');
+  const dot=root.querySelector('.tl-spark-dot');
+  const count=root.querySelector('.tl-spark-count');
+  if(!svg||!poly||!count)return;
+  // Plot: x = even spacing across 80px, y = inverse of value (higher value = lower line)
+  const vals=hist.map(h=>h.v);
+  const max=Math.max(5,...vals);
+  const min=Math.max(0,Math.min(...vals)-1);
+  const range=Math.max(1,max-min);
+  const points=vals.map((v,i)=>{
+    const x=hist.length<=1?40:(i*80)/(hist.length-1);
+    const y=16-((v-min)/range)*14;
+    return x.toFixed(1)+','+y.toFixed(1);
+  }).join(' ');
+  poly.setAttribute('points',points);
+  if(hist.length){
+    const lastX=hist.length<=1?40:80;
+    const lastY=16-((vals[vals.length-1]-min)/range)*14;
+    dot.setAttribute('cx',lastX);dot.setAttribute('cx',String(lastX));
+    dot.setAttribute('cy',String(lastY));
+    dot.style.display='block';
+  }
+  count.textContent=hist.length+'/'+MAX;
 })();
 // Live Zulu time
 function zu(){return new Date().toISOString().slice(11,16)+'Z';}

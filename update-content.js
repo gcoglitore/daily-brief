@@ -74,6 +74,32 @@ const THINK_TANK_HOSTS = new Set([
   "iiss.org","www.iiss.org","stimson.org","www.stimson.org",
   "russiamatters.org","www.russiamatters.org","carnegieendowment.org","www.carnegieendowment.org",
 ]);
+// Scan one section's HTML for badge classes and return the highest severity
+// found. Priority: bc (critical) > bh (high) > be (elevated) > bm (moderate).
+// Returns an empty string if no badges are present (theater stays neutral).
+const BADGE_RANK = { bc: 4, bh: 3, be: 2, bm: 1 };
+function highestBadgeIn(html) {
+  if (!html) return "";
+  let best = "";
+  let bestRank = 0;
+  const re = /<span class="badge (b[cheh m])"/g;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    const cls = m[1];
+    const rank = BADGE_RANK[cls] || 0;
+    if (rank > bestRank) { best = cls; bestRank = rank; }
+  }
+  // Fix the regex above which has a stray char class — use a cleaner pass too:
+  const re2 = /\bbadge (bc|bh|be|bm)\b/g;
+  let m2;
+  while ((m2 = re2.exec(html)) !== null) {
+    const cls = m2[1];
+    const rank = BADGE_RANK[cls] || 0;
+    if (rank > bestRank) { best = cls; bestRank = rank; }
+  }
+  return best ? "pm-" + best : "";
+}
+
 function buildSourceMeter(html) {
   const cites = [...html.matchAll(/<a class="cite-a"[^>]*href="https:\/\/([^/"]+)/g)];
   if (!cites.length) return "";
@@ -681,6 +707,20 @@ async function main() {
     const safe = scrubSection(content);
     html = html.replace(re, `<!--CONTENT_START:${key}-->\n${safe}\n<!--CONTENT_END:${key}-->`);
   }
+
+  // Tint each posture-map theater overlay based on the highest-severity
+  // badge in the corresponding section. Runs after section substitution
+  // so every <span class="badge ..."> from Claude is visible.
+  const sectionBySlug = (sid) => {
+    const r = results.find((x) => x.key === sid);
+    return r ? r.content : "";
+  };
+  html = html
+    .replaceAll("__PM_S1__", highestBadgeIn(sectionBySlug("s1")))
+    .replaceAll("__PM_S2__", highestBadgeIn(sectionBySlug("s2")))
+    .replaceAll("__PM_S3__", highestBadgeIn(sectionBySlug("s3")))
+    .replaceAll("__PM_S4__", highestBadgeIn(sectionBySlug("s4")))
+    .replaceAll("__PM_S8__", highestBadgeIn(sectionBySlug("s8")));
 
   // Build the source-diversity meter from the citations that actually
   // landed in the document, then substitute. Runs after all section
