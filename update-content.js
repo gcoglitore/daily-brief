@@ -268,14 +268,23 @@ function extractItems(rssXml) {
   const items = rssXml.match(/<item\b[\s\S]*?<\/item>/g) || [];
   const out = [];
   for (const item of items) {
-    const title = (item.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/) || [])[1] || "";
+    const raw = (item.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/) || [])[1] || "";
+    // Same decode-then-strip ordering as extractTitles — see that function for
+    // the XSS rationale.
+    const decoded = raw
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;|&apos;/g, "'");
+    const title = decoded.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
     const imgUrl =
       (item.match(/<media:content[^>]+url="([^"]+\.(?:jpg|jpeg|png|webp))"/i) || [])[1] ||
       (item.match(/<media:thumbnail[^>]+url="([^"]+)"/i) || [])[1] ||
       (item.match(/<enclosure[^>]+url="([^"]+\.(?:jpg|jpeg|png|webp))"/i) || [])[1] ||
       (item.match(/<img[^>]+src="([^"]+\.(?:jpg|jpeg|png|webp))/i) || [])[1] ||
       null;
-    if (imgUrl) out.push({ title: title.replace(/<[^>]+>/g, "").trim(), imgUrl });
+    if (imgUrl) out.push({ title, imgUrl });
   }
   return out;
 }
@@ -311,15 +320,60 @@ function extractTitles(rssXml, max) {
   return out;
 }
 
+// Pull the top trending prediction markets from Polymarket so the ticker
+// carries forward-looking market priced odds alongside the RSS headlines.
+// Uses the public gamma-api (no auth). Each market becomes one ticker entry
+// formatted "Polymarket: <question> — <outcome> <pct>%".
+async function fetchPolymarketHeadlines(max = 3) {
+  try {
+    const url =
+      "https://gamma-api.polymarket.com/markets?_limit=20&active=true&closed=false&order=volume24hr&ascending=false";
+    const buf = await fetchUrl(url);
+    const markets = JSON.parse(buf.toString("utf-8"));
+    if (!Array.isArray(markets)) return [];
+    const out = [];
+    for (const m of markets) {
+      if (out.length >= max) break;
+      const q = String(m.question || "").trim();
+      if (!q) continue;
+      // outcomes / outcomePrices arrive as either real arrays OR JSON-encoded
+      // strings (the API is inconsistent). Handle both.
+      const parseArr = (v) => {
+        if (Array.isArray(v)) return v;
+        if (typeof v === "string") { try { return JSON.parse(v); } catch { return []; } }
+        return [];
+      };
+      const outcomes = parseArr(m.outcomes);
+      const prices = parseArr(m.outcomePrices);
+      if (!outcomes.length || !prices.length) continue;
+      const pct = Math.round(Number(prices[0]) * 100);
+      if (!Number.isFinite(pct) || pct < 1 || pct > 99) continue;
+      const trimmedQ = q.length > 90 ? q.slice(0, 87).trimEnd() + "…" : q;
+      out.push(`Polymarket: ${trimmedQ} — ${outcomes[0]} ${pct}%`);
+    }
+    console.log(`[polymarket] ✓ ${out.length} markets`);
+    return out;
+  } catch (e) {
+    console.log(`[polymarket] ✗ ${e.message}`);
+    return [];
+  }
+}
+
 async function fetchTickerHeadlines() {
   const headlines = [];
+  // Pull Polymarket first so prediction-market signal leads the ticker; RSS
+  // headlines follow. Cap at 8 total so the marquee stays scannable.
+  const polyItems = await fetchPolymarketHeadlines(3);
+  for (const t of polyItems) {
+    if (headlines.length < 8 && !headlines.includes(t)) headlines.push(t);
+  }
   for (const feedUrl of TICKER_FEEDS) {
-    if (headlines.length >= 6) break;
+    if (headlines.length >= 8) break;
     try {
       const buf = await fetchUrl(feedUrl);
       const titles = extractTitles(buf.toString("utf-8"), 3);
       for (const t of titles) {
-        if (headlines.length < 6 && !headlines.includes(t)) headlines.push(t);
+        if (headlines.length < 8 && !headlines.includes(t)) headlines.push(t);
       }
       console.log(`[ticker] ✓ ${titles.length} from ${new URL(feedUrl).hostname}`);
     } catch (e) {
