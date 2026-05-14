@@ -1,5 +1,11 @@
 {
+  "name": "daily-brief",
+  "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.91.1"
+    "@anthropic-ai/sdk": "0.91.1",
+    "sanitize-html": "2.13.1"
   }
 }

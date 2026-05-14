@@ -1,24 +1,12 @@
 {
-  "name": "functions",
-  "description": "Cloud Functions for Firebase",
-  "scripts": {
-    "serve": "firebase emulators:start --only functions",
-    "shell": "firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
-  },
+  "name": "daily-brief-functions",
+  "private": true,
   "engines": {
-    "node": "24"
+    "node": "20"
   },
   "main": "index.js",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.91.0",
-    "firebase-admin": "^13.6.0",
-    "firebase-functions": "^7.0.0"
-  },
-  "devDependencies": {
-    "firebase-functions-test": "^3.4.1"
-  },
-  "private": true
+    "@anthropic-ai/sdk": "0.91.1",
+    "firebase-functions": "5.1.1"
+  }
 }

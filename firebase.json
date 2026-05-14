@@ -6,11 +6,45 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "rewrites": [
+      {
+        "source": "/api/ask",
+        "function": {
+          "functionId": "ask",
+          "region": "us-central1"
+        }
+      }
+    ],
     "headers": [
+      {
+        "source": "**/*.html",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+          { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src https://fonts.gstatic.com data:; media-src 'self'; connect-src 'self' https://api.allorigins.win; object-src 'none'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'" },
+          { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
+          { "key": "X-Content-Type-Options", "value": "nosniff" },
+          { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+          { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+          { "key": "Permissions-Policy", "value": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()" }
+        ]
+      },
+      {
+        "source": "**/*.{svg,png,jpg,jpeg,webp,gif,ico}",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=86400" }
+        ]
+      },
+      {
+        "source": "**/*.mp3",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=3600" },
+          { "key": "Content-Type", "value": "audio/mpeg" }
+        ]
+      },
       {
         "source": "**",
         "headers": [
-          { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+          { "key": "Cache-Control", "value": "public, max-age=3600" }
         ]
       }
     ]
@@ -19,7 +53,7 @@
     {
       "source": "functions",
       "codebase": "default",
-      "disallowLegacyRuntimeConfig": true,
+      "runtime": "nodejs20",
       "ignore": [
         "node_modules",
         ".git",

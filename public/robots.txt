@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /og-image.svg
+
+Sitemap: https://themorningbrief-ai-fork.web.app/sitemap.xml
